@@ -1,17 +1,18 @@
 /*
- * Filename: $Id: CUBE.CMD,v 1.5 2009/12/08 00:46:32 tjb Exp $
- * Changes: Removed spurious 'say arg' from line 77 [see bug 1066]
- * Changes: Fixed bug in ADDSTRING section where it would not process all relevant lines.
- * Changes: Fixed bug in REPSTRING section where the resulting line would be uppercased.
-
     ษอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
     บ                    Config Update/Batch Editing                        บ
     บ                                                                       บ
     บ  Batch update of CONFIG.SYS-like files. CUBE modifies a Target ASCII  บ
     บ  file, given a set of commands in a Procedure file.                   บ
     บ                                                                       บ
-    บ  2010-10-28 V2.6 YD overwrite c:\ with the current bootdrive          บ
-    บ                     (this addition was because of rpm installers)     บ
+    บ  2010-10-28 V2.6 YD  overwrite c:\ with the current bootdrive         บ
+    บ                      (this addition was because of rpm installers)    บ
+    บ  2009-12-06 V2.6 TJB Removed spurious 'say arg' from line 77          บ
+    บ                      [see bug 1066]                                   บ
+    บ                      Fixed bug in ADDSTRING section where it would    บ
+    บ                      not process all relevant lines.                  บ
+    บ                      Fixed bug in REPSTRING section where the         บ
+    บ                      resulting line would be uppercased.              บ
     บ                                                                       บ
     บ  04/06/93: V2.6 - Add 'procedure read from QUEUE' (from Steve Farrell)บ
     บ  03/06/93: V2.5 - Add IF/IFNOT to xLINE cmds (generalize N. Marks req)บ
