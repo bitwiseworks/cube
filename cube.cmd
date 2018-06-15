@@ -5,6 +5,10 @@
     บ  Batch update of CONFIG.SYS-like files. CUBE modifies a Target ASCII  บ
     บ  file, given a set of commands in a Procedure file.                   บ
     บ                                                                       บ
+    บ  2018-06-12 V2.8 SHL Correct comments - no functional changes         บ
+    บ  2017-04-01 V2.8 SHL Correct ADDSTRING ALWAYS logic more              บ
+    บ  2015-04-28 V2.7 SHL Correct ADDSTRING logic                          บ
+    บ  2015-04-28 V2.7 SHL Avoid spurious REPLSTRING uppercasing logic      บ
     บ  2010-10-28 V2.6 YD  overwrite c:\ with the current bootdrive         บ
     บ                      (this addition was because of rpm installers)    บ
     บ  2009-12-06 V2.6 TJB Removed spurious 'say arg' from line 77          บ
@@ -44,7 +48,7 @@
     ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ */
 
 '@echo off'
-version = '2.6'
+version = '2.8'
 pf = 0
 if left(arg(1),1) = '{' then parse arg '{'PFile'}' TFile Bkup . '(' Opt
 else do
@@ -464,9 +468,10 @@ ADDSTRING:
          Tar= Target.w; Wi = With; end             /*     string compare mode */
       else do
          Tar = translate(Target.w); Wi=translate(With); end  /*     string compare mode */
-      if pos(Wi,Tar) > 0 & ,                       /* String already there &  */
-         wordpos('ALWAYS',Opt) = 0 then nop        /* ALWAYS not specified.   */
-      else do
+      /* 2015-04-28 SHL was leaving early */
+      /* 2017-04-01 SHL was still failing if not always */
+      if pos(Wi,Tar) = 0 |,                        /* String not there or    */
+         wordpos('ALWAYS',Opt) <> 0 then do        /* ALWAYS specified.       */
       select                                       /* Where to add ?          */
         when wordpos('AFTER',Opt)>0 then do        /* 1) After a given string */
           astr=''                                  /*    defaulted to null    */
@@ -499,8 +504,8 @@ ADDSTRING:
           call logrep w,was,Target.w               /*   log action            */
         end
         otherwise nop
-      end
-      end /* ALWAYS = 0 */
+      end /* select */
+      end /* ALWAYS specified */
       if dir \= 'A' then leave                     /* leave if not ALL targets*/
     end
   end
@@ -572,11 +577,12 @@ REPSTRING:
            Tar = Target.w; Os=Ostr; end            /*     string compare mode */
         else do
            Tar = translate(Target.w); Os=translate(Ostr); end  /*     string compare mode */
-        ospos = pos(Os,Tar) 
+        /* 2015-04-28 SHL avoid spurious uppercasing */
+        ospos = pos(Os,Tar)
         if ospos > 0 then do                       /*     String is there     */
-           xx = left(was, ospos - 1)
-           rest = substr(was, ospos + length(os))           
-           newtar = newtar || xx || With           /*     replace occurrence  */
+           s = left(was, ospos - 1)
+           rest = substr(was, ospos + length(os))
+           newtar = newtar || s || With            /*     replace occurrence  */
            Target.w = rest                         /*     next                */
         end
         else leave

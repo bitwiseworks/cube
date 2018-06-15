@@ -1,0 +1,66 @@
+                                CUBE
+                               ÍÍÍÍÍÍ
+                                V2.8
+        ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+        ³   ONERROR { CONTINUE | STOP }                                ³
+        ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+        ³   CASE  { SENSITIVE | IGNORE }                               ³
+        ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+        ³   LINEID { NOSTRIP | STRIP "x" }                             ³
+        ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+        ³   AddLine  line  [( options]                                 ³
+        ³                                                              ³
+        ³   options : [ AFTER "x" [ONLY] | BEFORE "x" [ONLY] ]         ³
+        ³             [ IFNEW | ALWAYS ]                               ³
+        ³             [ *ID ]                                          ³
+        ³             [ RS(x) ]                                        ³
+        ³             [ IF "x"  ]                                      ³
+        ³             [ IFNOT "x"  ]                                   ³
+        ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+        ³   CommentLine lineid WITH type [(options ]                   ³
+        ³                                                              ³
+        ³   options : [ALL | FIRST | LAST]                             ³
+        ³             [ *ID ]                                          ³
+        ³             [ IF "x"  ]                                      ³
+        ³             [ IFNOT "x"  ]                                   ³
+        ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+        ³   DelLine lineid [(options ]                                 ³
+        ³                                                              ³
+        ³   options : [ ALL | FIRST | LAST ]                           ³
+        ³             [ *ID ]                                          ³
+        ³             [ RS(x) ]                                        ³
+        ³             [ IF "x"  ]                                      ³
+        ³             [ IFNOT "x"  ]                                   ³
+        ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+        ³   RepLine lineid WITH replacement [( options]                ³
+        ³                                                              ³
+        ³   options:  [ ALL | FIRST | LAST ]                           ³
+        ³             [ ADDTOP | ADDBOTTOM | DONTADD ]                 ³
+        ³             [ *ID ]                                          ³
+        ³             [ RS(x) ]                                        ³
+        ³             [ IF "x"  ]                                      ³
+        ³             [ IFNOT "x"  ]                                   ³
+        ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+        ³   AddString string IN lineid ( { AFTER s | BEFORE s} [Options³
+        ³                                                              ³
+        ³   options : [ IFNEW | ALWAYS ]                               ³
+        ³             [ ALL | FIRST | LAST ]                           ³
+        ³             [ *ID ]                                          ³
+        ³             [ RS(x) ]                                        ³
+        ³             [ ADDTOP | ADDBOTTOM ]                           ³
+        ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+        ³   DelString string [IN lineid] [(Options ]                   ³
+        ³                                                              ³
+        ³   options  : [ ALL | FIRST | LAST ]                          ³
+        ³              [ *ID ]                                         ³
+        ³              [ RS(x) ]                                       ³
+        ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+        ³   RepString ostring WITH nstring [IN lineid] [(Options]      ³
+        ³                                                              ³
+        ³   options : [ ALL | FIRST | LAST ]                           ³
+        ³             [ *ID ]                                          ³
+        ³             [ RS(x) ]                                        ³
+        ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+        ³   WHEN  { code1 ... coden  }                                 ³
+        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                
