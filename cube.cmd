@@ -5,6 +5,9 @@
     บ  Batch update of CONFIG.SYS-like files. CUBE modifies a Target ASCII  บ
     บ  file, given a set of commands in a Procedure file.                   บ
     บ                                                                       บ
+    บ  2019-01-25 V2.9 SCS remove the bootdrive hack from YD                บ
+    บ                      newer rpm don't need that anymore, as we have    บ
+    บ                      nice rpm scripts for that now                    บ
     บ  2018-06-12 V2.8 SHL Correct comments - no functional changes         บ
     บ  2017-04-01 V2.8 SHL Correct ADDSTRING ALWAYS logic more              บ
     บ  2015-04-28 V2.7 SHL Correct ADDSTRING logic                          บ
@@ -48,20 +51,13 @@
     ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ */
 
 '@echo off'
-version = '2.8'
+version = '2.9'
 pf = 0
 if left(arg(1),1) = '{' then parse arg '{'PFile'}' TFile Bkup . '(' Opt
 else do
   parse arg PFile TFile Bkup . '(' Opt
   pf = 1
 end
-
-/* YD map C:\ to boot drive */
-parse value value('PATH',,'OS2ENVIRONMENT') with ":\OS2;" -1 bootPath +3
-TFile = changestr('c:\', TFile, bootPath)
-TFile = changestr('C:\', TFile, bootPath)
-Bkup = changestr('c:\', Bkup, bootPath)
-Bkup = changestr('C:\', Bkup, bootPath)
 
 parse upper source source                          /* who am I ?              */
 
