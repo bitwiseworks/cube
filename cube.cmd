@@ -5,6 +5,7 @@
     º  Batch update of CONFIG.SYS-like files. CUBE modifies a Target ASCII  º
     º  file, given a set of commands in a Procedure file.                   º
     º                                                                       º
+    º  2019-02-09 V3.0 RLW Correct endless REPSTRING loop                   º
     º  2019-02-09 V3.0 RLW Remove dead code                                 º
     º  2019-01-25 V2.9 SCS remove the bootdrive hack from YD                º
     º                      newer rpm don't need that anymore, as we have    º
@@ -577,10 +578,9 @@ REPSTRING:
         /* 2015-04-28 SHL avoid spurious uppercasing */
         ospos = pos(Os,Tar)
         if ospos > 0 then do                       /*     String is there     */
-           s = left(was, ospos - 1)
-           rest = substr(was, ospos + length(os))
+           s = left(Target.w, ospos - 1)
+           Target.w = substr(Target.w, ospos + length(os))
            newtar = newtar || s || With            /*     replace occurrence  */
-           Target.w = rest                         /*     next                */
         end
         else leave
       end
