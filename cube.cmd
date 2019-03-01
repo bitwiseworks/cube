@@ -5,11 +5,10 @@
     บ  Batch update of CONFIG.SYS-like files. CUBE modifies a Target ASCII  บ
     บ  file, given a set of commands in a Procedure file.                   บ
     บ                                                                       บ
+    บ  2019-02-09 V3.0 RLW Adjust box-drawing characters for CP850          บ
     บ  2019-02-09 V3.0 RLW Correct endless REPSTRING loop                   บ
     บ  2019-02-09 V3.0 RLW Remove dead code                                 บ
-    บ  2019-01-25 V2.9 SCS remove the bootdrive hack from YD                บ
-    บ                      newer rpm don't need that anymore, as we have    บ
-    บ                      nice rpm scripts for that now                    บ
+    บ  2019-01-25 V2.9 SCS Remove the bootdrive hack - no longer needed     บ
     บ  2018-06-12 V2.8 SHL Correct comments - no functional changes         บ
     บ  2017-04-01 V2.8 SHL Correct ADDSTRING ALWAYS logic more              บ
     บ  2015-04-28 V2.7 SHL Correct ADDSTRING logic                          บ
@@ -168,19 +167,19 @@ end
 if chkmd = 0 then call exit 1 source 'ended.'      /* It's OVER !! and OK !!  */
 if chkmd = 1 then call exit 2 source 'ended.'      /*                         */
 
-/* ีอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออธ
-   ณ  Error report and action (based on Onerr setting, from ONERROR cmd)   ฦ
-   ิอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ  */
+/* ษอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
+   บ  Error report and action (based on Onerr setting, from ONERROR cmd)   บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ  */
 OnErrorDo:
   parse arg line,msg
   say PFile', line' line':' msg
   if OnErr = 'STOP' then call Exit 0 source 'stopped.'
                     else return 0
 
-/* ีอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออธ
-   ณ  Searches All or First or Last lines in Target starting with string   ฦ
-   ณ  Returns the line number(s) found.                                    ฦ
-   ิอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ  */
+/* ษอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
+   บ  Searches All or First or Last lines in Target starting with string   บ
+   บ  Returns the line number(s) found.                                    บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ  */
 Whereis: procedure expose Target. CaseM LStrip
  parse arg string,direction,mode
  if wordpos(direction,'F A')>0 then do; de=1; a=Target.0; par=1; end
@@ -205,9 +204,9 @@ Whereis: procedure expose Target. CaseM LStrip
  end
  return ret
 
-/* ีอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออธ
-   ณ  Update Target file from Target. stem. Remove '       ' lines ฦ
-   ิอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ  */
+/* ษอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
+   บ  Update Target file from Target. stem. Remove '       ' lines บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ  */
 SaveFile:
  address cmd 'erase' TFile
  src = rc
@@ -220,9 +219,9 @@ SaveFile:
  end
  return src
 
-/* ีอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออธ
-   ณ  Insert a line in Target file (stem) after line number i.             ฦ
-   ิอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ  */
+/* ษอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
+   บ  Insert a line in Target file (stem) after line number i.             บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ  */
 Insert: procedure  expose Target. NumberOfChanges
  parse arg i string
  if i = Target.0 then k = Target.0 + 1
@@ -239,10 +238,10 @@ Insert: procedure  expose Target. NumberOfChanges
  NumberOfChanges = NumberOfChanges + 1
  return
 
-/* ีอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออธ
-   ณ  returns a procedure command line  with all strings uppercased, exceptฦ
-   ณ  doubled-quoted strings.                                              ฦ
-   ิอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ  */
+/* ษอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
+   บ  returns a procedure command line  with all strings uppercased, exceptบ
+   บ  doubled-quoted strings.                                              บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ  */
 upkw: procedure expose vn. vv. _d_
   parse arg sentence
   sentence = strip(sentence)
@@ -260,9 +259,9 @@ upkw: procedure expose vn. vv. _d_
   end
   return phrase
 
-/* ีอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออธ
-   ณ  apply command line-specified substitutions within a string           ฦ
-   ิอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ  */
+/* ษอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
+   บ  apply command line-specified substitutions within a string           บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ  */
 Cmdrs: procedure expose vn. vv.
  parse arg y
  do i = 1 to vn.0
@@ -278,9 +277,9 @@ Cmdrs: procedure expose vn. vv.
  end
  return y
 
-/* ีอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออธ
-   ณ  apply env. variables substitutions to STRING if req. in OPTION.      ฦ
-   ิอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ  */
+/* ษอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
+   บ  apply env. variables substitutions to STRING if req. in OPTION.      บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ  */
 Envrs: procedure
   Parse arg String,Option
   out = ''
@@ -295,10 +294,10 @@ Envrs: procedure
   end
   return String
 
-/* ีอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออธ
-   ณ All that must be done to quit and more: say msg, save Target file if  ฦ
-   ณ necessary (type=1).                                                   ฦ
-   ิอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออพ  */
+/* ษอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
+   บ All that must be done to quit and more: say msg, save Target file if  บ
+   บ necessary (type=1).                                                   บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ  */
 Exit:
  parse arg type msg
  src=0
@@ -466,8 +465,6 @@ ADDSTRING:
          Tar= Target.w; Wi = With; end             /*     string compare mode */
       else do
          Tar = translate(Target.w); Wi=translate(With); end  /*     string compare mode */
-      /* 2015-04-28 SHL was leaving early */
-      /* 2017-04-01 SHL was still failing if not always */
       if pos(Wi,Tar) = 0 |,                        /* String not there or    */
          wordpos('ALWAYS',Opt) <> 0 then do        /* ALWAYS specified.       */
       select                                       /* Where to add ?          */
@@ -575,7 +572,6 @@ REPSTRING:
            Tar = Target.w; Os=Ostr; end            /*     string compare mode */
         else do
            Tar = translate(Target.w); Os=translate(Ostr); end  /*     string compare mode */
-        /* 2015-04-28 SHL avoid spurious uppercasing */
         ospos = pos(Os,Tar)
         if ospos > 0 then do                       /*     String is there     */
            s = left(Target.w, ospos - 1)
