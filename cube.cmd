@@ -52,7 +52,7 @@
     ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ */
 
 '@echo off'
-version = '2.9'
+version = '3.0'
 pf = 0
 if left(arg(1),1) = '{' then parse arg '{'PFile'}' TFile Bkup . '(' Opt
 else do
