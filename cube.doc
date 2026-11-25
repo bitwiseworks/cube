@@ -1,6 +1,6 @@
                                 CUBE
                                ======
-                                V3.0
+                                V3.1
 
  +--------------------------------------------------------------------------+
  |NOTE TO USERS of CUBE versions 1.x : some modifications in strings        |
@@ -43,7 +43,7 @@ wish, unique for a given variable name, to avoid conflict with other characters
 in a string or system interpretation. Variable names ARE case sensitive.
 
   Normally, CUBE returns 0 on success, or -1 (exit code 255) on fatal errors.
-The CHECK option uses a separate convention for return values (see below).
+CHECK and STATUS options use separate conventions for return values (see below).
 
 
 
@@ -77,6 +77,11 @@ The CHECK option uses a separate convention for return values (see below).
  |                     Run CUBE but *DON'T SAVE* the Target File. Return code|
  |                     will reflect the number of changes that would occur   |
  |                     in Target File.                                       |
+ |                                                                           |
+ |                   [ STATUS ]                                              |
+ |                     On success, return 2 if the Target File is changed and|
+ |                     0 if there are no changes. On fatal errors, return  -1|
+ |                     (exit code 255). STATUS is ignored in CHECK mode.     |
  |                                                                           |
  |                   [ MAKE code ]                                           |
  |                     Implements the 'conditionnal command execution'. CUBE |

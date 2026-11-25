@@ -9,6 +9,8 @@
     |  2026-11-24 V3.1 DK  Exit with -1 (255) on fatal errors unless in     |
     |                      CHECK mode                                       |
     |  2026-11-24 V3.1 DK  Don't save Target File when no changes applied   |
+    |  2026-11-24 V3.1 DK  Add STATUS mode that exits with 0 on no changes  |
+    |                      in Target File and with 2 if it is changed       |
     |  2019-02-09 V3.0 RLW Adjust box-drawing characters for CP850          |
     |  2019-02-09 V3.0 RLW Correct endless REPSTRING loop                   |
     |  2019-02-09 V3.0 RLW Remove dead code                                 |
@@ -69,6 +71,7 @@ DeleteMarker = '062003200420052006200320042005'x
 parse upper source source                          /* who am I ?              */
 
 chkmd=(wordpos('CHECK',translate(Opt))>0)          /* Check mode ?            */
+statusmd=(wordpos('STATUS',translate(Opt))>0)      /* Status mode ?           */
 
 if pf then do
   if PFile = '' then call Exit 0 'no procedure !'    /* no or missing PFile     */
@@ -318,6 +321,7 @@ Exit:
          src = -1
          msg = msg 'Error writing' TFile
        end
+       else if statusmd then src = 2               /* Report changes          */
      end
    end
    else src = NumberOfChanges
