@@ -6,6 +6,9 @@
     |  file, given a set of commands in a Procedure file.                   |
     |                                                                       |
     |  2026-11-24 V3.1 DK  Replace non-ASCI chars with similar ASCII        |
+    |  2026-11-24 V3.1 DK  Exit with -1 (255) on fatal errors unless in     |
+    |                      CHECK mode                                       |
+    |  2026-11-24 V3.1 DK  Don't save Target File when no changes applied   |
     |  2019-02-09 V3.0 RLW Adjust box-drawing characters for CP850          |
     |  2019-02-09 V3.0 RLW Correct endless REPSTRING loop                   |
     |  2019-02-09 V3.0 RLW Remove dead code                                 |
@@ -65,6 +68,8 @@ DeleteMarker = '062003200420052006200320042005'x
 
 parse upper source source                          /* who am I ?              */
 
+chkmd=(wordpos('CHECK',translate(Opt))>0)          /* Check mode ?            */
+
 if pf then do
   if PFile = '' then call Exit 0 'no procedure !'    /* no or missing PFile     */
   if Pfile <> 'QUEUE' then if exists(PFile)='' then call Exit 0 PFile 'not found'
@@ -73,7 +78,6 @@ if TFile = ''  then call Exit 0 'no target !'      /* no or missing Tfile     */
 if exists(TFile)='' then call Exit 0 TFile 'not found'
 
 pause=(wordpos('PAUSE',translate(Opt))>0)          /* Pause mode ?            */
-chkmd=(wordpos('CHECK',translate(Opt))>0)          /* Check mode ?            */
 ap = wordpos('MAKE',translate(Opt))                /* make  specified ?       */
 if ap>0 then Make=translate(word(Opt,ap+1))        /* ...when                 */
         else Make = '*'                            /* default make = all      */
@@ -167,8 +171,7 @@ do while p <= Proc.0                               /* for all PFile's lines   */
   end
   if pause then Pull .
 end
-if chkmd = 0 then call exit 1 source 'ended.'      /* It's OVER !! and OK !!  */
-if chkmd = 1 then call exit 2 source 'ended.'      /*                         */
+call Exit 1 source 'ended.'                        /* It's OVER !! and OK !!  */
 
 /* +-----------------------------------------------------------------------+
    |  Error report and action (based on Onerr setting, from ONERROR cmd)   |
@@ -216,7 +219,8 @@ SaveFile:
  if src = 0 then do
    do i = 1 to Target.0
      if Target.i = DeleteMarker then iterate
-     rc=lineout(TFile,Target.i)
+     src=lineout(TFile,Target.i)
+     if src <> 0 then leave
    end
    call close Tfile
  end
@@ -303,19 +307,22 @@ Envrs: procedure
    +-----------------------------------------------------------------------+  */
 Exit:
  parse arg type msg
- src=0
- Select
-   When type=1 then do
-        src = SaveFile()
-        if src <> 0 then msg = msg 'Error writing' TFile
-                    else msg = msg NumberOfChanges 'changes applied'
-        end
-   When type=2 then do
-        src = NumberOfChanges
-        msg = msg NumberOfChanges 'changes applied'
-        end
-   Otherwise nop
- End
+ if chkmd then src = 0                             /* CHECK mode: # of lines  */
+          else src = -1                            /* Otherwise -1 on failures*/
+ if type = 1 then do
+   src = 0
+   if \chkmd then do
+     if NumberOfChanges <> 0 then do
+       src = SaveFile()
+       if src <> 0 then do
+         src = -1
+         msg = msg 'Error writing' TFile
+       end
+     end
+   end
+   else src = NumberOfChanges
+   if src \= -1 then msg = msg NumberOfChanges 'changes applied'
+ end
  say msg
  Exit src
 
@@ -679,7 +686,7 @@ exists:
         |        vv.i = values of these variables                 |
         |Adapted from Walter Pachl's                              |
         +---------------------------------------------------------+           */
-get_cmdrs: procedure expose vn. vv.
+get_cmdrs: procedure expose vn. vv. chkmd
   parse arg Opt
   vn.0 = 0
   p = pos('RS(',translate(Opt))

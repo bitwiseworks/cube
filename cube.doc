@@ -42,6 +42,9 @@ File line only occurs if this line is processed by a CUBE's command.
 wish, unique for a given variable name, to avoid conflict with other characters
 in a string or system interpretation. Variable names ARE case sensitive.
 
+  Normally, CUBE returns 0 on success, or -1 (exit code 255) on fatal errors.
+The CHECK option uses a separate convention for return values (see below).
+
 
 
                          CUBE calling syntax
