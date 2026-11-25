@@ -1,12 +1,12 @@
                                 CUBE
-                               ÍÍÍÍÍÍ
+                               ======
                                 V3.0
 
- ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
- ³NOTE TO USERS of CUBE versions 1.x : some modifications in strings        ³
- ³  substitution with environment variables values, and REPSTRING syntax    ³
- ³  may require that you update Procedure files before using version 2.x    ³
- ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+ +--------------------------------------------------------------------------+
+ |NOTE TO USERS of CUBE versions 1.x : some modifications in strings        |
+ |  substitution with environment variables values, and REPSTRING syntax    |
+ |  may require that you update Procedure files before using version 2.x    |
+ +--------------------------------------------------------------------------+
 
   CUBE is a REXX procedure used to modify a CONFIG.SYS-like ASCII file (the
 Target File), based on a set of CUBE's commands (the Procedure File).
@@ -45,55 +45,55 @@ in a string or system interpretation. Variable names ARE case sensitive.
 
 
                          CUBE calling syntax
-                        ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
- ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
- ³ CUBE  procfname  targetfname  [backupfname]  [ ( options]  [ >log-fname ] ³
- ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
- ³       procfname = name of Procedure file containing CUBE's commands       ³
- ³                                     --or--                                ³
- ³                   { single cube command }                                 ³
- ³                                     --or--                                ³
- ³                   QUEUE                                                   ³
- ³                                                                           ³
- ³                   Notes: 1) { and } are required delimiters for single    ³
- ³                             cube command passed on command line.          ³
- ³                          2) QUEUE (uppercase!) is the required keyword    ³
- ³                             when CUBE is called from a Rexx command that  ³
- ³                             have 'queued' cube commands in the session    ³
- ³                             queue, rather than used a Procedure file.     ³
- ³                                                                           ³
- ³     targetfname = name of Target File to be updated                       ³
- ³                                                                           ³
- ³     backupfname = if specified, is the file name under which Target File  ³
- ³                   will be saved, before CUBE's processing                 ³
- ³                                                                           ³
- ³         options = [ PAUSE ]                                               ³
- ³                     CUBE pauses after each command executed from Procfname³
- ³                                                                           ³
- ³                   [ CHECK ]                                               ³
- ³                     Run CUBE but *DON'T SAVE* the Target File. Return code³
- ³                     will reflect the number of changes that would occur   ³
- ³                     in Target File.                                       ³
- ³                                                                           ³
- ³                   [ MAKE code ]                                           ³
- ³                     Implements the 'conditionnal command execution'. CUBE ³
- ³                     will only execute the profile's commands that are     ³
- ³                     under the control of a matching WHEN command. See WHEN³
- ³                     command for explanations. Code can be any string,     ³
- ³                     default is *.                                         ³
- ³                                                                           ³
- ³                   [ DLM char  ]                                           ³
- ³                     Define a new delimiter for CUBE's commands strings.   ³
- ³                     See definition of d-string below.                     ³
- ³                                                                           ³
- ³                   [ RS(#varnam1#=value1 #varnam2#=value2 .... ) ]         ³
- ³                                                                           ³
- ³                     Specifies a set of 'variablename=value' . CUBE will   ³
- ³                     replace each occurrence of a variable, within each    ³
- ³                     Procedure file command, with its corresponding value. ³
- ³                     Substitution is done before commands processing.      ³
- ³                     varnames must be defined with delimiters (# above).   ³
- ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                        =====================
+ +---------------------------------------------------------------------------+
+ | CUBE  procfname  targetfname  [backupfname]  [ ( options]  [ >log-fname ] |
+ +---------------------------------------------------------------------------+
+ |       procfname = name of Procedure file containing CUBE's commands       |
+ |                                     --or--                                |
+ |                   { single cube command }                                 |
+ |                                     --or--                                |
+ |                   QUEUE                                                   |
+ |                                                                           |
+ |                   Notes: 1) { and } are required delimiters for single    |
+ |                             cube command passed on command line.          |
+ |                          2) QUEUE (uppercase!) is the required keyword    |
+ |                             when CUBE is called from a Rexx command that  |
+ |                             have 'queued' cube commands in the session    |
+ |                             queue, rather than used a Procedure file.     |
+ |                                                                           |
+ |     targetfname = name of Target File to be updated                       |
+ |                                                                           |
+ |     backupfname = if specified, is the file name under which Target File  |
+ |                   will be saved, before CUBE's processing                 |
+ |                                                                           |
+ |         options = [ PAUSE ]                                               |
+ |                     CUBE pauses after each command executed from Procfname|
+ |                                                                           |
+ |                   [ CHECK ]                                               |
+ |                     Run CUBE but *DON'T SAVE* the Target File. Return code|
+ |                     will reflect the number of changes that would occur   |
+ |                     in Target File.                                       |
+ |                                                                           |
+ |                   [ MAKE code ]                                           |
+ |                     Implements the 'conditionnal command execution'. CUBE |
+ |                     will only execute the profile's commands that are     |
+ |                     under the control of a matching WHEN command. See WHEN|
+ |                     command for explanations. Code can be any string,     |
+ |                     default is *.                                         |
+ |                                                                           |
+ |                   [ DLM char  ]                                           |
+ |                     Define a new delimiter for CUBE's commands strings.   |
+ |                     See definition of d-string below.                     |
+ |                                                                           |
+ |                   [ RS(#varnam1#=value1 #varnam2#=value2 .... ) ]         |
+ |                                                                           |
+ |                     Specifies a set of 'variablename=value' . CUBE will   |
+ |                     replace each occurrence of a variable, within each    |
+ |                     Procedure file command, with its corresponding value. |
+ |                     Substitution is done before commands processing.      |
+ |                     varnames must be defined with delimiters (# above).   |
+ +---------------------------------------------------------------------------+
 
         examples:  CUBE c:\config.pro config.sys config.bak >cube.log
 
@@ -105,7 +105,7 @@ in a string or system interpretation. Variable names ARE case sensitive.
 
 
                  CUBE Procedure File Commands Syntax
-                 ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+                 ===================================
 
 Within CUBE's commands, any string representing the actual string to be looked
 for, replaced and/or inserted in the Target File, must be enclosed between
@@ -125,14 +125,14 @@ Blank (null) lines are accepted. Comments lines may be inserted, with either
 '*' or '--' as their first character(s). Blank and comments lines may NOT
 appear in between continuation lines of a command.
 
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  ---------------------------------------------------------------------------
 
 ONERROR         specify what action to be taken in case of syntax error while
                 processing a command of the current Procedure File.
 
-                ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-                ³ ONERROR { CONTINUE | STOP }  ³
-                ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                +------------------------------+
+                | ONERROR { CONTINUE | STOP }  |
+                +------------------------------+
 
                 CONTINUE : issue error message and skip to next command.
                 STOP     : issue error message and stop CUBE processing.
@@ -142,15 +142,15 @@ ONERROR         specify what action to be taken in case of syntax error while
 
                 Default is STOP if no ONERROR command issued.
 
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  ---------------------------------------------------------------------------
 
 CASE            specify how Procedure and Target strings are handled for
                 strings comparisons. Once set, it applies for both
                 line identifications and strings identifications within line.
 
-                ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-                ³  CASE  { SENSITIVE | IGNORE } ³
-                ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                +-------------------------------+
+                |  CASE  { SENSITIVE | IGNORE } |
+                +-------------------------------+
 
                 SENSITIVE: strings comparisons will be case sensitive.
                 IGNORE   : strings comparisons will NOT be case sensitive.
@@ -158,7 +158,7 @@ CASE            specify how Procedure and Target strings are handled for
 
                 Default is IGNORE if no CASE command issued.
 
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  ---------------------------------------------------------------------------
 
 WHEN            Following CUBE's commands will only be executed if the CUBE's
                 command line option MAKE matches one of the 'codes' specified.
@@ -166,9 +166,9 @@ WHEN            Following CUBE's commands will only be executed if the CUBE's
                 on 'ONERROR', 'CASE', 'LINEID' , 'STRINGDELIMITER' and 'WHEN'
                 commands: these will always get executed.
 
-                ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-                ³  WHEN  { code1 ... coden  }  ³
-                ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                +------------------------------+
+                |  WHEN  { code1 ... coden  }  |
+                +------------------------------+
 
                 coden    : any string, case insensitive.
                            If * then following commands will all get executed,
@@ -177,15 +177,15 @@ WHEN            Following CUBE's commands will only be executed if the CUBE's
 
                 Default is * (no WHEN command specified)
 
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  ---------------------------------------------------------------------------
 
 LINEID          specify that identification of Target File lines should
                 begin at column 1 (CUBE's default) or ignore leading
                 characters.
 
-                ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-                ³  LINEID { NOSTRIP | STRIP "x" } ³
-                ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                +---------------------------------+
+                |  LINEID { NOSTRIP | STRIP "x" } |
+                +---------------------------------+
 
                 NOSTRIP  : return to default CUBE identification (column 1).
                 STRIP "x": strip leading x's in Target File lines for line
@@ -193,7 +193,7 @@ LINEID          specify that identification of Target File lines should
 
                 Default is NOSTRIP if no LINEID command issued.
 
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  ---------------------------------------------------------------------------
 
 REPLINE         REPLACE an entire LINE of Target File with a new text.
                 The d-string used to identify the line to be replaced,
@@ -201,9 +201,9 @@ REPLINE         REPLACE an entire LINE of Target File with a new text.
                 If the line is not found within Target File, the new line
                 may be added to the Target File.
 
-                ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-                ³  REPLINE lineid WITH replacement [( options]  ³
-                ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                +-----------------------------------------------+
+                |  REPLINE lineid WITH replacement [( options]  |
+                +-----------------------------------------------+
 
                 Command Abbreviation : RL
 
@@ -239,14 +239,14 @@ REPLINE         REPLACE an entire LINE of Target File with a new text.
                             in the Target File.
                 IFNOT "x" : Replace only if a line identified by "x"
                             doesn't exist in Target File.
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  ---------------------------------------------------------------------------
 
 ADDLINE         Conditionnally ADDs a LINE to the Target File. Position of
                 the line may be specified by reference to an existing line.
 
-                ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-                ³ ADDLINE  line  [( options] ³
-                ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                +----------------------------+
+                | ADDLINE  line  [( options] |
+                +----------------------------+
 
                 Command Abbreviation : AL
 
@@ -284,13 +284,13 @@ ADDLINE         Conditionnally ADDs a LINE to the Target File. Position of
                             in the Target File.
                 IFNOT "x" : Add only if a line identified by "x"
                             doesn't exist in Target File.
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  ---------------------------------------------------------------------------
 
 DELLINE         DELETE a given LINE from Target File.
 
-                ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-                ³ DELLINE lineid [(options ] ³
-                ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                +----------------------------+
+                | DELLINE lineid [(options ] |
+                +----------------------------+
 
                 Command Abbreviation : DL
 
@@ -316,14 +316,14 @@ DELLINE         DELETE a given LINE from Target File.
                             in the Target File.
                 IFNOT "x" : Delete only if a line identified by "x"
                             doesn't exist in Target File.
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  ---------------------------------------------------------------------------
 
 COMMENTLINE     Comment out a line in Target File. In fact, places a
                 user-specified character string at the beginning of a line.
 
-                ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-                ³ COMMENTLINE lineid WITH type [(options ] ³
-                ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                +------------------------------------------+
+                | COMMENTLINE lineid WITH type [(options ] |
+                +------------------------------------------+
 
                 Command Abbreviation : CL
 
@@ -344,15 +344,15 @@ COMMENTLINE     Comment out a line in Target File. In fact, places a
                             in the Target File.
                 IFNOT "x" : Comment only if a line identified by "x"
                             doesn't exist in Target File.
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  ---------------------------------------------------------------------------
 
 ADDSTRING       Add a string within a given line of Target File. The position
                 of the string is specified by reference to an existing string
                 within the line.
 
-                ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-                ³ ADDSTRING string IN lineid ( { AFTER s | BEFORE s} [Options] ³
-                ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                +--------------------------------------------------------------+
+                | ADDSTRING string IN lineid ( { AFTER s | BEFORE s} [Options] |
+                +--------------------------------------------------------------+
 
                 Command Abbreviation : AS
 
@@ -397,7 +397,7 @@ ADDSTRING       Add a string within a given line of Target File. The position
                            at TOP of Target File.
                 ADDBOTTOM: if lineid not found, adds line lineid || string
                            at BOTTOM of Target File.
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  ---------------------------------------------------------------------------
 
 REPSTRING       REPLACE a given STRING by another, within a given line
                 of Target File. If no line is specified (lineid) then
@@ -405,9 +405,9 @@ REPSTRING       REPLACE a given STRING by another, within a given line
                 replaced with the new string. All occurences of the
                 string in a given line are replaced.
 
-                ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-                ³ REPSTRING ostring WITH nstring [IN lineid] [(Options] ³
-                ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                +-------------------------------------------------------+
+                | REPSTRING ostring WITH nstring [IN lineid] [(Options] |
+                +-------------------------------------------------------+
                 Command Abbreviation : RS
 
                 ostring  : d-string representing the string to be replaced.
@@ -432,16 +432,16 @@ REPSTRING       REPLACE a given STRING by another, within a given line
                            replaced by their value. This occurs BEFORE any
                            other ADDSTRING processing.
 
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  ---------------------------------------------------------------------------
 
 DELSTRING       DELETE a given STRING in a given line of Target File. If
                 no line is specified, then all occurrences of string within
                 Target File will be deleted. All occurences of the string in
                 a given line are deleted.
 
-                ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-                ³ DELSTRING string [IN lineid] [(Options] ³
-                ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+                +-----------------------------------------+
+                | DELSTRING string [IN lineid] [(Options] |
+                +-----------------------------------------+
                 Command Abbreviation : DS
 
                 string   : d-string representing the string to be deleted.
@@ -459,7 +459,7 @@ DELSTRING       DELETE a given STRING in a given line of Target File. If
 
                 RS(x)     : replace substring(s) within string to be deleted.
                             Standard RS() pre-processing; refer to addstring.
-  ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  ---------------------------------------------------------------------------
 
 Examples:
 
@@ -519,5 +519,3 @@ WHEN C
 DELSTRING _xxx"xxxxxxx_ (All
   deletes all occurences of  xxx"xxxxxxx  if option DLM _ was used on
   CUBE's command line
-
-                           

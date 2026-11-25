@@ -1,64 +1,67 @@
 /*
-    ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-    º                    Config Update/Batch Editing                        º
-    º                                                                       º
-    º  Batch update of CONFIG.SYS-like files. CUBE modifies a Target ASCII  º
-    º  file, given a set of commands in a Procedure file.                   º
-    º                                                                       º
-    º  2019-02-09 V3.0 RLW Adjust box-drawing characters for CP850          º
-    º  2019-02-09 V3.0 RLW Correct endless REPSTRING loop                   º
-    º  2019-02-09 V3.0 RLW Remove dead code                                 º
-    º  2019-01-25 V2.9 SCS Remove the bootdrive hack - no longer needed     º
-    º  2018-06-12 V2.8 SHL Correct comments - no functional changes         º
-    º  2017-04-01 V2.8 SHL Correct ADDSTRING ALWAYS logic more              º
-    º  2015-04-28 V2.7 SHL Correct ADDSTRING logic                          º
-    º  2015-04-28 V2.7 SHL Avoid spurious REPLSTRING uppercasing logic      º
-    º  2010-10-28 V2.6 YD  overwrite c:\ with the current bootdrive         º
-    º                      (this addition was because of rpm installers)    º
-    º  2009-12-06 V2.6 TJB Removed spurious 'say arg' from line 77          º
-    º                      [see bug 1066]                                   º
-    º                      Fixed bug in ADDSTRING section where it would    º
-    º                      not process all relevant lines.                  º
-    º                      Fixed bug in REPSTRING section where the         º
-    º                      resulting line would be uppercased.              º
-    º                                                                       º
-    º  04/06/93: V2.6 - Add 'procedure read from QUEUE' (from Steve Farrell)º
-    º  03/06/93: V2.5 - Add IF/IFNOT to xLINE cmds (generalize N. Marks req)º
-    º                   Correct ADDSTRING BEFORE option  (Neil Marks)       º
-    º  07/04/93: V2.4 - Corrected ADDBOTTOM/ADDTOP in ADDSTRING (Per Hertz) º
-    º                   Address cmd + CHECK Option + new exit rtne          º
-    º  21/01/93: V2.3 - Added user defined string delimiter in CUBE cmds    º
-    º  21/12/92: V2.2 - Added conditionnal command processing (WHEN)        º
-    º  26/11/92: V2.1 - RS() for DL, DS (desinstallation case)              º
-    º                   New LINEID command (strip leading chars)            º
-    º                   ADDTOP,ADDBOTTOM for AS (W. Pachl requirement)      º
-    º                   Fix Whereis (Walter Pachl).                         º
-    º                   Exit with SaveFile return code (Walter Pachl)       º
-    º  18/11/92: V2.0 - Changes with environment variable substitution (RS) º
-    º                       (AS, RS, AL & AL now all have same RS() option) º
-    º                   Logging of all changes made to Target File          º
-    º                   Adapt/Include some of Walter Pachl's enhancements:  º
-    º                       Single CUBE command on command line             º
-    º                       Add'l string substitution at command line level º
-    º                       PAUSE option (debugging purposes)               º
-    º  05/11/92: V1.5 - AL with pre substitution                            º
-    º  03/11/92: V1.4 - AS with substitution ; fix RS recursion.            º
-    º  02/11/92: V1.3 - Bug fixes & cmds abbrev, thanks to Walter Pachl.    º
-    º                   Target Backup & lineid no more limited to col 1.    º
-    º  30/10/92: V1.2 - Added env variable substitution + version #         º
-    º  31/08/92: V1.1 - Bug fix                                             º
-    º  21/07/92: V1.0 - Initial revision                                    º
-    º  Didier LAFON - LAFON at CBEPROFS                                     º
-    ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼ */
+    +-----------------------------------------------------------------------+
+    |                    Config Update/Batch Editing                        |
+    |                                                                       |
+    |  Batch update of CONFIG.SYS-like files. CUBE modifies a Target ASCII  |
+    |  file, given a set of commands in a Procedure file.                   |
+    |                                                                       |
+    |  2026-11-24 V3.1 DK  Replace non-ASCI chars with similar ASCII        |
+    |  2019-02-09 V3.0 RLW Adjust box-drawing characters for CP850          |
+    |  2019-02-09 V3.0 RLW Correct endless REPSTRING loop                   |
+    |  2019-02-09 V3.0 RLW Remove dead code                                 |
+    |  2019-01-25 V2.9 SCS Remove the bootdrive hack - no longer needed     |
+    |  2018-06-12 V2.8 SHL Correct comments - no functional changes         |
+    |  2017-04-01 V2.8 SHL Correct ADDSTRING ALWAYS logic more              |
+    |  2015-04-28 V2.7 SHL Correct ADDSTRING logic                          |
+    |  2015-04-28 V2.7 SHL Avoid spurious REPLSTRING uppercasing logic      |
+    |  2010-10-28 V2.6 YD  overwrite c:\ with the current bootdrive         |
+    |                      (this addition was because of rpm installers)    |
+    |  2009-12-06 V2.6 TJB Removed spurious 'say arg' from line 77          |
+    |                      [see bug 1066]                                   |
+    |                      Fixed bug in ADDSTRING section where it would    |
+    |                      not process all relevant lines.                  |
+    |                      Fixed bug in REPSTRING section where the         |
+    |                      resulting line would be uppercased.              |
+    |                                                                       |
+    |  04/06/93: V2.6 - Add 'procedure read from QUEUE' (from Steve Farrell)|
+    |  03/06/93: V2.5 - Add IF/IFNOT to xLINE cmds (generalize N. Marks req)|
+    |                   Correct ADDSTRING BEFORE option  (Neil Marks)       |
+    |  07/04/93: V2.4 - Corrected ADDBOTTOM/ADDTOP in ADDSTRING (Per Hertz) |
+    |                   Address cmd + CHECK Option + new exit rtne          |
+    |  21/01/93: V2.3 - Added user defined string delimiter in CUBE cmds    |
+    |  21/12/92: V2.2 - Added conditionnal command processing (WHEN)        |
+    |  26/11/92: V2.1 - RS() for DL, DS (desinstallation case)              |
+    |                   New LINEID command (strip leading chars)            |
+    |                   ADDTOP,ADDBOTTOM for AS (W. Pachl requirement)      |
+    |                   Fix Whereis (Walter Pachl).                         |
+    |                   Exit with SaveFile return code (Walter Pachl)       |
+    |  18/11/92: V2.0 - Changes with environment variable substitution (RS) |
+    |                       (AS, RS, AL & AL now all have same RS() option) |
+    |                   Logging of all changes made to Target File          |
+    |                   Adapt/Include some of Walter Pachl's enhancements:  |
+    |                       Single CUBE command on command line             |
+    |                       Add'l string substitution at command line level |
+    |                       PAUSE option (debugging purposes)               |
+    |  05/11/92: V1.5 - AL with pre substitution                            |
+    |  03/11/92: V1.4 - AS with substitution ; fix RS recursion.            |
+    |  02/11/92: V1.3 - Bug fixes & cmds abbrev, thanks to Walter Pachl.    |
+    |                   Target Backup & lineid no more limited to col 1.    |
+    |  30/10/92: V1.2 - Added env variable substitution + version #         |
+    |  31/08/92: V1.1 - Bug fix                                             |
+    |  21/07/92: V1.0 - Initial revision                                    |
+    |  Didier LAFON - LAFON at CBEPROFS                                     |
+    +-----------------------------------------------------------------------+ */
 
 '@echo off'
-version = '3.0'
+version = '3.1'
 pf = 0
 if left(arg(1),1) = '{' then parse arg '{'PFile'}' TFile Bkup . '(' Opt
 else do
   parse arg PFile TFile Bkup . '(' Opt
   pf = 1
 end
+
+DeleteMarker = '062003200420052006200320042005'x
 
 parse upper source source                          /* who am I ?              */
 
@@ -130,10 +133,10 @@ end
 Target.0 = i                                       /* Target.0 = # of lines   */
 call close Tfile
 
-/*  ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-    ºThe real thing: go thru procedure file, interpret/execute its commands º
-    ºsequentially.                                                          º
-    ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼ */
+/*  +-----------------------------------------------------------------------+
+    |The real thing: go thru procedure file, interpret/execute its commands |
+    |sequentially.                                                          |
+    +-----------------------------------------------------------------------+ */
 
 p = 0                                              /* Proc lines index        */
 do while p <= Proc.0                               /* for all PFile's lines   */
@@ -167,19 +170,19 @@ end
 if chkmd = 0 then call exit 1 source 'ended.'      /* It's OVER !! and OK !!  */
 if chkmd = 1 then call exit 2 source 'ended.'      /*                         */
 
-/* ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-   º  Error report and action (based on Onerr setting, from ONERROR cmd)   º
-   ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼  */
+/* +-----------------------------------------------------------------------+
+   |  Error report and action (based on Onerr setting, from ONERROR cmd)   |
+   +-----------------------------------------------------------------------+  */
 OnErrorDo:
   parse arg line,msg
   say PFile', line' line':' msg
   if OnErr = 'STOP' then call Exit 0 source 'stopped.'
                     else return 0
 
-/* ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-   º  Searches All or First or Last lines in Target starting with string   º
-   º  Returns the line number(s) found.                                    º
-   ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼  */
+/* +-----------------------------------------------------------------------+
+   |  Searches All or First or Last lines in Target starting with string   |
+   |  Returns the line number(s) found.                                    |
+   +-----------------------------------------------------------------------+  */
 Whereis: procedure expose Target. CaseM LStrip
  parse arg string,direction,mode
  if wordpos(direction,'F A')>0 then do; de=1; a=Target.0; par=1; end
@@ -204,24 +207,24 @@ Whereis: procedure expose Target. CaseM LStrip
  end
  return ret
 
-/* ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-   º  Update Target file from Target. stem. Remove '       ' lines º
-   ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼  */
+/* +-----------------------------------------------------------------------+
+   |  Update Target file from Target. stem. Remove DeleteMarker lines      |
+   +-----------------------------------------------------------------------+  */
 SaveFile:
  address cmd 'erase' TFile
  src = rc
  if src = 0 then do
    do i = 1 to Target.0
-     if Target.i = '       ' then iterate
+     if Target.i = DeleteMarker then iterate
      rc=lineout(TFile,Target.i)
    end
    call close Tfile
  end
  return src
 
-/* ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-   º  Insert a line in Target file (stem) after line number i.             º
-   ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼  */
+/* +-----------------------------------------------------------------------+
+   |  Insert a line in Target file (stem) after line number i.             |
+   +-----------------------------------------------------------------------+  */
 Insert: procedure  expose Target. NumberOfChanges
  parse arg i string
  if i = Target.0 then k = Target.0 + 1
@@ -238,10 +241,10 @@ Insert: procedure  expose Target. NumberOfChanges
  NumberOfChanges = NumberOfChanges + 1
  return
 
-/* ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-   º  returns a procedure command line  with all strings uppercased, exceptº
-   º  doubled-quoted strings.                                              º
-   ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼  */
+/* +-----------------------------------------------------------------------+
+   |  returns a procedure command line  with all strings uppercased, except|
+   |  doubled-quoted strings.                                              |
+   +-----------------------------------------------------------------------+  */
 upkw: procedure expose vn. vv. _d_
   parse arg sentence
   sentence = strip(sentence)
@@ -259,9 +262,9 @@ upkw: procedure expose vn. vv. _d_
   end
   return phrase
 
-/* ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-   º  apply command line-specified substitutions within a string           º
-   ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼  */
+/* +-----------------------------------------------------------------------+
+   |  apply command line-specified substitutions within a string           |
+   +-----------------------------------------------------------------------+  */
 Cmdrs: procedure expose vn. vv.
  parse arg y
  do i = 1 to vn.0
@@ -277,9 +280,9 @@ Cmdrs: procedure expose vn. vv.
  end
  return y
 
-/* ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-   º  apply env. variables substitutions to STRING if req. in OPTION.      º
-   ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼  */
+/* +-----------------------------------------------------------------------+
+   |  apply env. variables substitutions to STRING if req. in OPTION.      |
+   +-----------------------------------------------------------------------+  */
 Envrs: procedure
   Parse arg String,Option
   out = ''
@@ -294,10 +297,10 @@ Envrs: procedure
   end
   return String
 
-/* ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-   º All that must be done to quit and more: say msg, save Target file if  º
-   º necessary (type=1).                                                   º
-   ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼  */
+/* +-----------------------------------------------------------------------+
+   | All that must be done to quit and more: say msg, save Target file if  |
+   | necessary (type=1).                                                   |
+   +-----------------------------------------------------------------------+  */
 Exit:
  parse arg type msg
  src=0
@@ -316,33 +319,33 @@ Exit:
  say msg
  Exit src
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ ONERROR [CONTINUE] [STOP] : what to do on syntax errors ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | ONERROR [CONTINUE] [STOP] : what to do on syntax errors |
+        +---------------------------------------------------------+           */
 ONERROR:
  if wordpos(translate(Parms),'CONTINUE STOP')>0 then OnErr = translate(Parms)
     else rc=OnErrorDo(p,'On Error what ?')
  return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ WHEN     ... wordlist of when codes ...                 ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | WHEN     ... wordlist of when codes ...                 |
+        +---------------------------------------------------------+           */
 APPLYWHEN:
  MWhen = strip(translate(Parms),'B')
  if MWhen = '*' then MWhen = Make
  return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ CASE [SENSITIVE] [IGNORE] : string compare mode         ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | CASE [SENSITIVE] [IGNORE] : string compare mode         |
+        +---------------------------------------------------------+           */
 CASE:
  if wordpos(translate(Parms),'SENSITIVE IGNORE')>0 then CaseM = translate(left(Parms,1))
     else rc=OnErrorDo(p,'Case what ?')
  return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ LINEID [NOSTRIP] [STRIP "x"]                            ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | LINEID [NOSTRIP] [STRIP "x"]                            |
+        +---------------------------------------------------------+           */
 SLINEID:
  Select
    When word(translate(Parms),1) = 'NOSTRIP' then Lstrip = ""
@@ -355,9 +358,9 @@ SLINEID:
  end
  return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ REPLINE lineid WITH replacement [( options]             ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | REPLINE lineid WITH replacement [( options]             |
+        +---------------------------------------------------------+           */
 REPLINE:
   parse var Parms (_d_) Lineid (_d_)  'WITH' (_d_) With (_d_)  '(' Opt
   if Lineid = '' then do                           /* No line identifier      */
@@ -392,9 +395,9 @@ REPLINE:
   else if after>-1 then call insert after With     /* if no target, try add   */
   return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ ADDLINE     line  [( options]                             ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ         */
+/*      +-----------------------------------------------------------+
+        | ADDLINE     line  [( options]                             |
+        +-----------------------------------------------------------+         */
 ADDLINE:
   parse var Parms (_d_) Line (_d_)  '(' Opt
   if Line = '' then do                             /* No line identifier      */
@@ -440,9 +443,9 @@ ADDLINE:
   if after \= -1 then call insert after Line       /* add the line            */
   return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ ADDSTRING string IN lineid [(Options]                     ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ         */
+/*      +-----------------------------------------------------------+
+        | ADDSTRING string IN lineid [(Options]                     |
+        +-----------------------------------------------------------+         */
 ADDSTRING:
   parse var Parms (_d_) With (_d_)  'IN' (_d_) Lineid (_d_)   '(' Opt
   if Lineid = '' then do                           /* No line identifier      */
@@ -510,9 +513,9 @@ ADDSTRING:
   end
   return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ DELSTRING string [IN lineid] [(Options]                   ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +-----------------------------------------------------------+
+        | DELSTRING string [IN lineid] [(Options]                   |
+        +-----------------------------------------------------------+           */
 DELSTRING:
   parse var Parms (_d_) What (_d_)  'IN' (_d_) Lineid (_d_)  '(' Opt
   if Lineid = '' then parse var Parms (_d_) What (_d_)  '(' Opt
@@ -546,9 +549,9 @@ DELSTRING:
   end
   return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ REPSTRING ostring [WITH nstring] [IN lineid] [(Options]   ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +-----------------------------------------------------------+
+        | REPSTRING ostring [WITH nstring] [IN lineid] [(Options]   |
+        +-----------------------------------------------------------+           */
 REPSTRING:
   parse var Parms (_d_) Ostr (_d_)  'WITH' (_d_) With (_d_)  'IN' (_d_) Lineid (_d_)  '(' Opt
   if Ostr = '' then do                             /* No old string specif.   */
@@ -586,9 +589,9 @@ REPSTRING:
   end
   return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ COMMENTLINE lineid WITH type [(options ]                ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | COMMENTLINE lineid WITH type [(options ]                |
+        +---------------------------------------------------------+           */
 COMMENTL:
   parse var Parms (_d_) Lineid (_d_)  'WITH' (_d_) cmnt (_d_)  '(' Opt
   if Lineid = '' then do                           /* No identifier           */
@@ -614,9 +617,9 @@ COMMENTL:
   end
   return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ DELLINE lineid [(options ]                              ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | DELLINE lineid [(options ]                              |
+        +---------------------------------------------------------+           */
 DELLINE:
   parse var Parms (_d_) Lineid (_d_)   '(' Opt
   if Lineid = '' then do                           /* No identifier           */
@@ -635,15 +638,15 @@ DELLINE:
       say 'Deleted line' w
       say '  was:' Target.w
       NumberOfChanges = NumberOfChanges + 1
-      Target.w = '       '                 /*    mark for delete      */
+      Target.w = DeleteMarker                      /*    mark for delete      */
       if dir \= 'A' then leave                     /* leave if not ALL targets*/
     end
   end
   return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ SEARCHDIR: Direction for line search in Target File     ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | SEARCHDIR: Direction for line search in Target File     |
+        +---------------------------------------------------------+           */
 Searchdir: procedure
   select                                           /* What target lines ?     */
     when wordpos('LAST',arg(1))>0 then dir='L'     /* set reverse search      */
@@ -652,30 +655,30 @@ Searchdir: procedure
   end
   return dir
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ LIDMOD: Identify line at 1st col or anywhere in line    ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | LIDMOD: Identify line at 1st col or anywhere in line    |
+        +---------------------------------------------------------+           */
 Lidmod: procedure
   if wordpos('*ID',arg(1))>0 then return(0)
                              else return(1)
 
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ Stream functions (close & exists)                       ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | Stream functions (close & exists)                       |
+        +---------------------------------------------------------+           */
 close:
   return stream(arg(1),'C','CLOSE')
 
 exists:
   return stream(arg(1),'C','QUERY EXISTS')
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ get substitution variables and their values in cmdline. ³
-        ³ ( RS(#aaa#=aaa #bbb#=bbb)                               ³
-        ³Output: vn.i = number and names of subst. variables      ³
-        ³        vv.i = values of these variables                 ³
-        ³Adapted from Walter Pachl's                              ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | get substitution variables and their values in cmdline. |
+        | ( RS(#aaa#=aaa #bbb#=bbb)                               |
+        |Output: vn.i = number and names of subst. variables      |
+        |        vv.i = values of these variables                 |
+        |Adapted from Walter Pachl's                              |
+        +---------------------------------------------------------+           */
 get_cmdrs: procedure expose vn. vv.
   parse arg Opt
   vn.0 = 0
@@ -696,9 +699,9 @@ get_cmdrs: procedure expose vn. vv.
   end
   Return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ Log a change in a target line                           ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | Log a change in a target line                           |
+        +---------------------------------------------------------+           */
 logrep: procedure expose NumberOfChanges
 parse arg ln,old,new
 if old<>new then do
@@ -710,11 +713,11 @@ end
 
 return
 
-/*      ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-        ³ Process IF/IFNOT logic for Lines commands               ³
-        ³    returns 1 if IF/IFNOT condition is false !!          ³
-        ³    returns 0 otherwise                                  ³
-        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ           */
+/*      +---------------------------------------------------------+
+        | Process IF/IFNOT logic for Lines commands               |
+        |    returns 1 if IF/IFNOT condition is false !!          |
+        |    returns 0 otherwise                                  |
+        +---------------------------------------------------------+           */
 ififnot:
 if wordpos('IFNOT',Opt)>0 Then Do                /* Process only when       */
   parse var Opt 'IFNOT' (_d_) istr (_d_) .       /* another line doesn't    */
