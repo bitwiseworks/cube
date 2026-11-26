@@ -5,6 +5,7 @@
     |  Batch update of CONFIG.SYS-like files. CUBE modifies a Target ASCII  |
     |  file, given a set of commands in a Procedure file.                   |
     |                                                                       |
+    |  2026-11-25 V3.1 DK  Preserve original case in ADDSTRING and DELSTRING|
     |  2026-11-24 V3.1 DK  Replace non-ASCI chars with similar ASCII        |
     |  2026-11-24 V3.1 DK  Exit with -1 (255) on fatal errors unless in     |
     |                      CHECK mode                                       |
@@ -232,7 +233,7 @@ SaveFile:
 /* +-----------------------------------------------------------------------+
    |  Insert a line in Target file (stem) after line number i.             |
    +-----------------------------------------------------------------------+  */
-Insert: procedure  expose Target. NumberOfChanges
+InsertLine: procedure  expose Target. NumberOfChanges
  parse arg i string
  if i = Target.0 then k = Target.0 + 1
  else do
@@ -403,7 +404,7 @@ REPLINE:
       if dir \= 'A' then leave                     /*     quit if not ALL     */
     end
   end
-  else if after>-1 then call insert after With     /* if no target, try add   */
+  else if after>-1 then call InsertLine after With     /* if no target, try add   */
   return
 
 /*      +-----------------------------------------------------------+
@@ -451,7 +452,7 @@ ADDLINE:
     end
     otherwise after=Target.0                       /* 3) default = add bottom */
   end
-  if after \= -1 then call insert after Line       /* add the line            */
+  if after \= -1 then call InsertLine after Line       /* add the line            */
   return
 
 /*      +-----------------------------------------------------------+
@@ -490,8 +491,8 @@ ADDSTRING:
           if astr = '' | pos(astr,Tar)=0           /* if no string or no match*/
              then Target.w = Target.w || With      /*    add at end of target */
           else do
-             parse var Tar xx (astr) rest          /* insert string after     */
-             Target.w = xx || astr || With || rest /*   specified string      */
+             /* Insert after the anchor in the original target text. */
+             Target.w = insert(With,Target.w,pos(astr,Tar)+length(astr)-1)
           end
           call logrep w,was,Target.w               /*   log action            */
         end
@@ -502,13 +503,14 @@ ADDSTRING:
           was = Target.w                           /*    save for logging     */
           if bstr = '' | pos(bstr,Tar)=0           /* if no string or no match*/
           then do                                  /* add at beginning        */
-            If CaseM = 'I' then Lid=translate(Lineid)
-            Parse var Tar (Lid) rest               /* but after identifier    */
-            Target.w = Lineid || With || rest      /*                         */
+            Lid=Lineid
+            If CaseM = 'I' then Lid=translate(Lid)
+            /* Insert after the original line identifier. */
+            Target.w = insert(With,Target.w,pos(Lid,Tar)+length(Lid)-1)
           end
           else do
-             parse var Tar xx (bstr) rest          /* insert string before    */
-             Target.w = xx || With || bstr || rest /*   specified string      */
+             /* Insert before the anchor in the original target text. */
+             Target.w = insert(With,Target.w,pos(bstr,Tar)-1)
           end
           call logrep w,was,Target.w               /*   log action            */
         end
@@ -519,8 +521,8 @@ ADDSTRING:
     end
   end
   else do                                          /* no target : add line ?  */
-    if wordpos('ADDTOP',Opt)>0 then call insert 0 Lineid || With
-    if wordpos('ADDBOTTOM',Opt)>0 then call insert Target.0 Lineid || With
+    if wordpos('ADDTOP',Opt)>0 then call InsertLine 0 Lineid || With
+    if wordpos('ADDBOTTOM',Opt)>0 then call InsertLine Target.0 Lineid || With
   end
   return
 
@@ -549,8 +551,8 @@ DELSTRING:
            Tar = translate(Target.w); Wh=translate(What); end  /*     string compare mode */
         if pos(Wh,Tar) > 0 then do                 /*     String is there     */
            was = Target.w                          /*     save for logging    */
-           parse var Tar xx (Wh) rest              /*     isolate string      */
-           Target.w = xx || rest                   /*     delete string       */
+           /* Delete from the original target, preserving its case. */
+           Target.w = delstr(Target.w,pos(Wh,Tar),length(Wh))
            call logrep w,was,Target.w              /*     log action          */
         end
         else leave
