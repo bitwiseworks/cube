@@ -5,6 +5,7 @@
     |  Batch update of CONFIG.SYS-like files. CUBE modifies a Target ASCII  |
     |  file, given a set of commands in a Procedure file.                   |
     |                                                                       |
+    |  2026-11-26 V3.1 DK  Add per-identifier EXACT matching mode flag      |
     |  2026-11-25 V3.1 DK  Preserve original case in ADDSTRING and DELSTRING|
     |  2026-11-24 V3.1 DK  Replace non-ASCI chars with similar ASCII        |
     |  2026-11-24 V3.1 DK  Exit with -1 (255) on fatal errors unless in     |
@@ -187,11 +188,11 @@ OnErrorDo:
                     else return 0
 
 /* +-----------------------------------------------------------------------+
-   |  Searches All or First or Last lines in Target starting with string   |
+   |  Searches All or First or Last Target lines using the given ID mode.  |
    |  Returns the line number(s) found.                                    |
    +-----------------------------------------------------------------------+  */
 Whereis: procedure expose Target. CaseM LStrip
- parse arg string,direction,mode
+ parse arg string,direction,mode,flags
  if wordpos(direction,'F A')>0 then do; de=1; a=Target.0; par=1; end
                                else do; de=Target.0; a=1; par=-1; end
  stringlength=length(string); ret = ''
@@ -199,7 +200,13 @@ Whereis: procedure expose Target. CaseM LStrip
    If CaseM = 'S' then do; T = Target.i ; S = string ; end
       else do; T = translate(Target.i) ; S = translate(string) ; end
    If length(LStrip) = 1 then T = strip(T,'L',Lstrip)
-   if mode=1 then do
+   if flags = 'EXACT' then do
+     if T == S then do
+       ret = ret i
+       if direction \= 'A' then leave
+     end
+   end
+   else if mode=1 then do
      if left(T,stringlength)=S then do
        ret = ret i
        if direction \= 'A' then leave
@@ -374,7 +381,7 @@ SLINEID:
         | REPLINE lineid WITH replacement [( options]             |
         +---------------------------------------------------------+           */
 REPLINE:
-  parse var Parms (_d_) Lineid (_d_)  'WITH' (_d_) With (_d_)  '(' Opt
+  parse var Parms (_d_) Lineid (_d_) Flags 'WITH' (_d_) With (_d_)  '(' Opt
   if Lineid = '' then do                           /* No line identifier      */
     rc=OnErrorDo(p,'Replace what line ?')
     return
@@ -394,7 +401,7 @@ REPLINE:
     otherwise after=-1                             /* don't add is the default*/
   end
   if ififnot() then return                         /* Process only when       */
-  where = Whereis(Lineid,dir,mod)                  /* Get target lines numbers*/
+  where = Whereis(Lineid,dir,mod,strip(Flags))     /* Get target lines numbers*/
   if where \= '' then do                           /* if target(s) found      */
     do until where = ''                            /*   process all targets   */
       parse var where w where                      /*     1 at a time         */
@@ -411,7 +418,7 @@ REPLINE:
         | ADDLINE     line  [( options]                             |
         +-----------------------------------------------------------+         */
 ADDLINE:
-  parse var Parms (_d_) Line (_d_)  '(' Opt
+  parse var Parms (_d_) Line (_d_) Flags '(' Opt
   if Line = '' then do                             /* No line identifier      */
     rc=OnErrorDo(p,'Add what line ?')              /*    process error        */
     return                                         /*    ignore command       */
@@ -424,15 +431,15 @@ ADDLINE:
   Line = Cmdrs(Line)                               /* cmd substitution        */
   Line = envrs(Line,Opt)                           /* env substitution if req */
   mod = Lidmod(opt)                                /* floating line id ?      */
-  exist = Whereis(Line,'F',mod)                    /* If this line exists and */
+  exist = Whereis(Line,'F',mod,strip(Flags))       /* If this line exists and */
   if exist \= '' & always = 0 then return          /* IFNEW , don't add !     */
   if ififnot() then return
 
   select                                           /* Where to add ?          */
     when wordpos('AFTER',Opt)>0 then do;           /* 1) After a given line   */
-      parse var Opt 'AFTER' (_d_) astr (_d_)  .    /*    line identifier ?    */
+      parse var Opt 'AFTER' (_d_) astr (_d_) aflags ./*    line identifier ?    */
       if astr = '' then after = Target.0           /*    no id = add bottom   */
-      else after = Whereis(astr,'F',mod)           /*    else get # of 1st    */
+      else after = Whereis(astr,'F',mod,aflags)    /*    else get # of 1st    */
       parse var after after .                      /*    line with this id.   */
       if after='' then do                          /*    no match found       */
         if wordpos('ONLY',Opt)>0 then after=-1     /*      if ONLY, don't add */
@@ -440,9 +447,9 @@ ADDLINE:
       end
     end
     when wordpos('BEFORE',Opt)>0 then do;          /* 2) Before a given line  */
-      parse var Opt 'BEFORE' (_d_) bstr (_d_)  .   /*    line identifier ?    */
+      parse var Opt 'BEFORE' (_d_) bstr (_d_) bflags ./*    line identifier ?    */
       if bstr = '' then after = 0                  /*    no id = add top      */
-      else after = Whereis(bstr,'F',mod)           /*    else get # of 1st    */
+      else after = Whereis(bstr,'F',mod,bflags)    /*    else get # of 1st    */
       parse var after after .                      /*    line with this id.   */
       if after ='' then do                         /*    no match found       */
         if wordpos('ONLY',Opt)>0 then after=-1     /*      if ONLY don't add  */
@@ -459,7 +466,7 @@ ADDLINE:
         | ADDSTRING string IN lineid [(Options]                     |
         +-----------------------------------------------------------+         */
 ADDSTRING:
-  parse var Parms (_d_) With (_d_)  'IN' (_d_) Lineid (_d_)   '(' Opt
+  parse var Parms (_d_) With (_d_)  'IN' (_d_) Lineid (_d_) Flags '(' Opt
   if Lineid = '' then do                           /* No line identifier      */
     rc=OnErrorDo(p,'Add string where ?')           /*    process error        */
     return                                         /*    ignore command       */
@@ -472,7 +479,7 @@ ADDSTRING:
   With = Envrs(With,Opt)                           /* env substitution if req */
   dir=Searchdir(opt)                               /* Which target line ?     */
   mod=Lidmod(opt)                                  /* floating line id ?      */
-  where = Whereis(Lineid,dir,mod)                  /* Select target(s)        */
+  where = Whereis(Lineid,dir,mod,strip(Flags))     /* Select target(s)        */
   if where \= '' then do                           /*   if target found       */
     do until where = ''                            /*     process target(s)   */
       parse var where w where                      /*     1 at a time         */
@@ -485,23 +492,27 @@ ADDSTRING:
       select                                       /* Where to add ?          */
         when wordpos('AFTER',Opt)>0 then do        /* 1) After a given string */
           astr=''                                  /*    defaulted to null    */
-          parse var Opt 'AFTER' (_d_) astr (_d_)  .  /*    what is this string  */
+          parse var Opt 'AFTER' (_d_) astr (_d_) aflags . /*    what is this string  */
           If CaseM = 'I' then astr=translate(astr)
           was = Target.w                           /*    save for logging     */
-          if astr = '' | pos(astr,Tar)=0           /* if no string or no match*/
+          apos = pos(astr,Tar)
+          if aflags = 'EXACT' then if Tar \== astr then apos = 0
+          if astr = '' | apos=0                    /* if no string or no match*/
              then Target.w = Target.w || With      /*    add at end of target */
           else do
              /* Insert after the anchor in the original target text. */
-             Target.w = insert(With,Target.w,pos(astr,Tar)+length(astr)-1)
+             Target.w = insert(With,Target.w,apos+length(astr)-1)
           end
           call logrep w,was,Target.w               /*   log action            */
         end
         when wordpos('BEFORE',Opt)>0 then do       /* 2) Before a given string*/
           bstr=''                                  /*    defaulted to null    */
-          parse var Opt 'BEFORE' (_d_) bstr (_d_)  . /*    what is this string  */
+          parse var Opt 'BEFORE' (_d_) bstr (_d_) bflags . /*    what is this string  */
           If CaseM = 'I' then bstr=translate(bstr)
           was = Target.w                           /*    save for logging     */
-          if bstr = '' | pos(bstr,Tar)=0           /* if no string or no match*/
+          bpos = pos(bstr,Tar)
+          if bflags = 'EXACT' then if Tar \== bstr then bpos = 0
+          if bstr = '' | bpos=0                    /* if no string or no match*/
           then do                                  /* add at beginning        */
             Lid=Lineid
             If CaseM = 'I' then Lid=translate(Lid)
@@ -510,7 +521,7 @@ ADDSTRING:
           end
           else do
              /* Insert before the anchor in the original target text. */
-             Target.w = insert(With,Target.w,pos(bstr,Tar)-1)
+             Target.w = insert(With,Target.w,bpos-1)
           end
           call logrep w,was,Target.w               /*   log action            */
         end
@@ -530,8 +541,11 @@ ADDSTRING:
         | DELSTRING string [IN lineid] [(Options]                   |
         +-----------------------------------------------------------+           */
 DELSTRING:
-  parse var Parms (_d_) What (_d_)  'IN' (_d_) Lineid (_d_)  '(' Opt
-  if Lineid = '' then parse var Parms (_d_) What (_d_)  '(' Opt
+  parse var Parms (_d_) What (_d_)  'IN' (_d_) Lineid (_d_) Flags '(' Opt
+  if Lineid = '' then do
+    parse var Parms (_d_) What (_d_)  '(' Opt
+    Flags = ''
+  end
   if What = '' then do                             /* No string to del        */
     rc=OnErrorDo(p,'Delete what string ?')         /*    process error        */
     return                                         /*    ignore command       */
@@ -540,7 +554,7 @@ DELSTRING:
   What = envrs(What,Opt)                           /* env substitution if req */
   dir=Searchdir(opt)                               /* Which target line ?     */
   mod=Lidmod(opt)                                  /* floating line id ?      */
-  where = Whereis(Lineid,dir,mod)                  /* Select target(s)        */
+  where = Whereis(Lineid,dir,mod,strip(Flags))     /* Select target(s)        */
   if where \= '' then do                           /*   if target found       */
     do until where = ''                            /*     process target(s)   */
       parse var where w where                      /*     1 at a time         */
@@ -566,19 +580,22 @@ DELSTRING:
         | REPSTRING ostring [WITH nstring] [IN lineid] [(Options]   |
         +-----------------------------------------------------------+           */
 REPSTRING:
-  parse var Parms (_d_) Ostr (_d_)  'WITH' (_d_) With (_d_)  'IN' (_d_) Lineid (_d_)  '(' Opt
+  parse var Parms (_d_) Ostr (_d_)  'WITH' (_d_) With (_d_)  'IN' (_d_) Lineid (_d_) Flags '(' Opt
   if Ostr = '' then do                             /* No old string specif.   */
     rc=OnErrorDo(p,'Replace what string ?')        /*    process error        */
     return                                         /*    ignore command       */
   end
-  if With = '' then parse var Parms (_d_) Ostr (_d_)  'IN' (_d_) Lineid (_d_)  '(' Opt
-  if Lineid = '' then parse var Parms (_d_) Ostr (_d_)  '(' Opt
+  if With = '' then parse var Parms (_d_) Ostr (_d_)  'IN' (_d_) Lineid (_d_) Flags '(' Opt
+  if Lineid = '' then do
+    parse var Parms (_d_) Ostr (_d_)  '(' Opt
+    Flags = ''
+  end
   if With = '' then With = Ostr                    /* No rep string specif.   */
   With = Cmdrs(With)                               /* cmd substitution        */
   With = envrs(With,Opt)                           /* env substitution if req.*/
   dir=Searchdir(opt)                               /* Which target line ?     */
   mod=Lidmod(opt)                                  /* floating line id ?      */
-  where = Whereis(Lineid,dir,mod)                  /* Select target(s)        */
+  where = Whereis(Lineid,dir,mod,strip(Flags))     /* Select target(s)        */
   do while where \= ''                             /*   if target found       */
       parse var where w where                      /*     1 at a time         */
       was = Target.w
@@ -606,7 +623,7 @@ REPSTRING:
         | COMMENTLINE lineid WITH type [(options ]                |
         +---------------------------------------------------------+           */
 COMMENTL:
-  parse var Parms (_d_) Lineid (_d_)  'WITH' (_d_) cmnt (_d_)  '(' Opt
+  parse var Parms (_d_) Lineid (_d_) Flags 'WITH' (_d_) cmnt (_d_)  '(' Opt
   if Lineid = '' then do                           /* No identifier           */
     rc=OnErrorDo(p,'Comment what ?')               /*    process error        */
     return                                         /*    ignore command       */
@@ -618,7 +635,7 @@ COMMENTL:
   dir=Searchdir(opt)                               /* Which target lines ?    */
   mod=Lidmod(opt)                                  /* floating line id ?      */
   if ififnot() then return
-  where= whereis(Lineid,dir,mod)                   /* get target lines #s     */
+  where= whereis(Lineid,dir,mod,strip(Flags))      /* get target lines #s     */
   if where \= '' then do                           /* if match(es) found      */
     do until where = ''                            /*   process target(s)     */
       parse var where w where                      /*   1 at a time           */
@@ -634,7 +651,7 @@ COMMENTL:
         | DELLINE lineid [(options ]                              |
         +---------------------------------------------------------+           */
 DELLINE:
-  parse var Parms (_d_) Lineid (_d_)   '(' Opt
+  parse var Parms (_d_) Lineid (_d_) Flags '(' Opt
   if Lineid = '' then do                           /* No identifier           */
     rc=OnErrorDo(p,'Delete what line ?')           /*    process error        */
     return                                         /*    ignore command       */
@@ -644,7 +661,7 @@ DELLINE:
   dir=Searchdir(opt)                               /* Which target line(s) ?  */
   mod=Lidmod(opt)                                  /* floating line id ?      */
   if ififnot() then return
-  where= whereis(Lineid,dir,mod)                   /* Get target lin(s) #s    */
+  where= whereis(Lineid,dir,mod,strip(Flags))      /* Get target lin(s) #s    */
   if where \= '' then do                           /* if match(es) found      */
     do until where = ''                            /*    process all targets  */
       parse var where w where                      /*    one at a time        */
@@ -733,13 +750,13 @@ return
         +---------------------------------------------------------+           */
 ififnot:
 if wordpos('IFNOT',Opt)>0 Then Do                /* Process only when       */
-  parse var Opt 'IFNOT' (_d_) istr (_d_) .       /* another line doesn't    */
-  iexist = Whereis(istr,'F',mod)                 /* exists                  */
+  parse var Opt 'IFNOT' (_d_) istr (_d_) iflags ./* another line doesn't    */
+  iexist = Whereis(istr,'F',mod,iflags)          /* exists                  */
   if iexist \= '' then return(1)                 /*                         */
 end                                              /*                         */
 if wordpos('IF',Opt)>0 Then Do                   /* Process only when       */
-  parse var Opt 'IF' (_d_) istr (_d_) .          /* another line exists     */
-  iexist = Whereis(istr,'F',mod)                 /*                         */
+  parse var Opt 'IF' (_d_) istr (_d_) iflags .   /* another line exists     */
+  iexist = Whereis(istr,'F',mod,iflags)          /*                         */
   if iexist  = '' then return(1)                 /*                         */
 end                                              /*                         */
 return(0)

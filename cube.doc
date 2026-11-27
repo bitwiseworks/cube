@@ -2,11 +2,11 @@
                                ======
                                 V3.1
 
- +--------------------------------------------------------------------------+
- |NOTE TO USERS of CUBE versions 1.x : some modifications in strings        |
- |  substitution with environment variables values, and REPSTRING syntax    |
- |  may require that you update Procedure files before using version 2.x    |
- +--------------------------------------------------------------------------+
+ +-----------------------------------------------------------------------+
+ |NOTE TO USERS of CUBE versions 1.x : some modifications in strings     |
+ |  substitution with environment variables values, and REPSTRING syntax |
+ |  may require that you update Procedure files before using version 2.x |
+ +-----------------------------------------------------------------------+
 
   CUBE is a REXX procedure used to modify a CONFIG.SYS-like ASCII file (the
 Target File), based on a set of CUBE's commands (the Procedure File).
@@ -29,6 +29,14 @@ Target File line as any line containing the identification string, starting at
 any position. Furthermore, the command LINEID may specify that leading
 characters in Target File lines should be ignored (stripped) for identification.
 
+  Append EXACT after the closing delimiter of an identification d-string to
+require an exact whole-line match. The flag belongs to that d-string only. It is
+supported for primary line IDs, IN line IDs, ADDLINE's IFNEW duplicate check,
+IF/IFNOT conditions, and BEFORE/AFTER anchors. Without EXACT, existing prefix or
+*ID substring matching is unchanged. Exact matching takes precedence over *ID,
+respects CASE and LINEID STRIP. Spaces may separate the closing delimiter and
+EXACT.
+
   Commands in a Procedure File may be further customized at CUBE's execution
 time: strings may contain 'variables' names that will be replaced by their
 current value at execution time. This is known as 'substitution' and comes in
@@ -49,59 +57,59 @@ CHECK and STATUS options use separate conventions for return values (see below).
 
                          CUBE calling syntax
                         =====================
- +---------------------------------------------------------------------------+
- | CUBE  procfname  targetfname  [backupfname]  [ ( options]  [ >log-fname ] |
- +---------------------------------------------------------------------------+
- |       procfname = name of Procedure file containing CUBE's commands       |
- |                                     --or--                                |
- |                   { single cube command }                                 |
- |                                     --or--                                |
- |                   QUEUE                                                   |
- |                                                                           |
- |                   Notes: 1) { and } are required delimiters for single    |
- |                             cube command passed on command line.          |
- |                          2) QUEUE (uppercase!) is the required keyword    |
- |                             when CUBE is called from a Rexx command that  |
- |                             have 'queued' cube commands in the session    |
- |                             queue, rather than used a Procedure file.     |
- |                                                                           |
- |     targetfname = name of Target File to be updated                       |
- |                                                                           |
- |     backupfname = if specified, is the file name under which Target File  |
- |                   will be saved, before CUBE's processing                 |
- |                                                                           |
- |         options = [ PAUSE ]                                               |
- |                     CUBE pauses after each command executed from Procfname|
- |                                                                           |
- |                   [ CHECK ]                                               |
- |                     Run CUBE but *DON'T SAVE* the Target File. Return code|
- |                     will reflect the number of changes that would occur   |
- |                     in Target File.                                       |
- |                                                                           |
- |                   [ STATUS ]                                              |
- |                     On success, return 2 if the Target File is changed and|
- |                     0 if there are no changes. On fatal errors, return  -1|
- |                     (exit code 255). STATUS is ignored in CHECK mode.     |
- |                                                                           |
- |                   [ MAKE code ]                                           |
- |                     Implements the 'conditionnal command execution'. CUBE |
- |                     will only execute the profile's commands that are     |
- |                     under the control of a matching WHEN command. See WHEN|
- |                     command for explanations. Code can be any string,     |
- |                     default is *.                                         |
- |                                                                           |
- |                   [ DLM char  ]                                           |
- |                     Define a new delimiter for CUBE's commands strings.   |
- |                     See definition of d-string below.                     |
- |                                                                           |
- |                   [ RS(#varnam1#=value1 #varnam2#=value2 .... ) ]         |
- |                                                                           |
- |                     Specifies a set of 'variablename=value' . CUBE will   |
- |                     replace each occurrence of a variable, within each    |
- |                     Procedure file command, with its corresponding value. |
- |                     Substitution is done before commands processing.      |
- |                     varnames must be defined with delimiters (# above).   |
- +---------------------------------------------------------------------------+
+ +----------------------------------------------------------------------------+
+ | CUBE procfname targetfname [backupfname] [ (options ] [ >log-fname ]       |
+ +----------------------------------------------------------------------------+
+ |      procfname = name of Procedure file containing CUBE's commands         |
+ |                                     --or--                                 |
+ |                  { single cube command }                                   |
+ |                                     --or--                                 |
+ |                  QUEUE                                                     |
+ |                                                                            |
+ |                  Notes: 1) { and } are required delimiters for single      |
+ |                            cube command passed on command line.            |
+ |                         2) QUEUE (uppercase!) is the required keyword      |
+ |                            when CUBE is called from a Rexx command that    |
+ |                            have 'queued' cube commands in the session      |
+ |                            queue, rather than used a Procedure file.       |
+ |                                                                            |
+ |     targetfname = name of Target File to be updated                        |
+ |                                                                            |
+ |     backupfname = if specified, is the file name under which Target File   |
+ |                   will be saved, before CUBE's processing                  |
+ |                                                                            |
+ |         options = [ PAUSE ]                                                |
+ |                     CUBE pauses after each command executed from Procfname |
+ |                                                                            |
+ |                   [ CHECK ]                                                |
+ |                     Run CUBE but *DON'T SAVE* the Target File. Return code |
+ |                     will reflect the number of changes that would occur    |
+ |                     in Target File.                                        |
+ |                                                                            |
+ |                   [ STATUS ]                                               |
+ |                     On success, return 2 if the Target File is changed and |
+ |                     0 if there are no changes. On fatal errors, return  -1 |
+ |                     (exit code 255). STATUS is ignored in CHECK mode.      |
+ |                                                                            |
+ |                   [ MAKE code ]                                            |
+ |                     Implements the 'conditionnal command execution'. CUBE  |
+ |                     will only execute the profile's commands that are      |
+ |                     under the control of a matching WHEN command. See WHEN |
+ |                     command for explanations. Code can be any string,      |
+ |                     default is *.                                          |
+ |                                                                            |
+ |                   [ DLM char  ]                                            |
+ |                     Define a new delimiter for CUBE's commands strings.    |
+ |                     See definition of d-string below.                      |
+ |                                                                            |
+ |                   [ RS(#varnam1#=value1 #varnam2#=value2 .... ) ]          |
+ |                                                                            |
+ |                     Specifies a set of 'variablename=value' . CUBE will    |
+ |                     replace each occurrence of a variable, within each     |
+ |                     Procedure file command, with its corresponding value.  |
+ |                     Substitution is done before commands processing.       |
+ |                     varnames must be defined with delimiters (# above).    |
+ +----------------------------------------------------------------------------+
 
         examples:  CUBE c:\config.pro config.sys config.bak >cube.log
 
@@ -138,9 +146,9 @@ appear in between continuation lines of a command.
 ONERROR         specify what action to be taken in case of syntax error while
                 processing a command of the current Procedure File.
 
-                +------------------------------+
-                | ONERROR { CONTINUE | STOP }  |
-                +------------------------------+
+                +-----------------------------+
+                | ONERROR { CONTINUE | STOP } |
+                +-----------------------------+
 
                 CONTINUE : issue error message and skip to next command.
                 STOP     : issue error message and stop CUBE processing.
@@ -174,9 +182,9 @@ WHEN            Following CUBE's commands will only be executed if the CUBE's
                 on 'ONERROR', 'CASE', 'LINEID' , 'STRINGDELIMITER' and 'WHEN'
                 commands: these will always get executed.
 
-                +------------------------------+
-                |  WHEN  { code1 ... coden  }  |
-                +------------------------------+
+                +-----------------------------+
+                |  WHEN  { code1 ... coden  } |
+                +-----------------------------+
 
                 coden    : any string, case insensitive.
                            If * then following commands will all get executed,
@@ -209,9 +217,9 @@ REPLINE         REPLACE an entire LINE of Target File with a new text.
                 If the line is not found within Target File, the new line
                 may be added to the Target File.
 
-                +-----------------------------------------------+
-                |  REPLINE lineid WITH replacement [( options]  |
-                +-----------------------------------------------+
+                +-------------------------------------------------------+
+                |  REPLINE lineid [EXACT] WITH replacement [ (options ] |
+                +-------------------------------------------------------+
 
                 Command Abbreviation : RL
 
@@ -222,8 +230,11 @@ REPLINE         REPLACE an entire LINE of Target File with a new text.
                               [ ADDTOP | ADDBOTTOM | DONTADD ]
                               [ *ID ]
                               [ RS(x) ]
-                              [ IF "x"  ]
-                              [ IFNOT "x"  ]
+                              [ IF "x" [EXACT] ]
+                              [ IFNOT "x" [EXACT] ]
+
+                EXACT : Match identifying strings to the whole line instead
+                        of its leftmost characters
 
                 ALL   : replaces ALL occurences of 'lineid' (default)
                 FIRST : only replaces 1st occurences of 'lineid'
@@ -249,23 +260,26 @@ REPLINE         REPLACE an entire LINE of Target File with a new text.
                             doesn't exist in Target File.
   ---------------------------------------------------------------------------
 
-ADDLINE         Conditionnally ADDs a LINE to the Target File. Position of
+ADDLINE         Conditionally ADDs a LINE to the Target File. Position of
                 the line may be specified by reference to an existing line.
 
-                +----------------------------+
-                | ADDLINE  line  [( options] |
-                +----------------------------+
+                +-----------------------------------+
+                | ADDLINE line [EXACT] [ (options ] |
+                +-----------------------------------+
 
                 Command Abbreviation : AL
 
                 line    : d-string representing the line to be added
 
-                options : [ AFTER x [ONLY] | BEFORE x [ONLY] ]
+                options : [ AFTER x [EXACT] [ONLY] | BEFORE x [EXACT] [ONLY] ]
                           [ IFNEW | ALWAYS ]
                           [ *ID ]
                           [ RS(x) ]
-                          [ IF "x"  ]
-                          [ IFNOT "x"  ]
+                          [ IF "x" [EXACT] ]
+                          [ IFNOT "x" [EXACT] ]
+
+                EXACT : Match identifying strings to the whole line instead
+                        of its leftmost characters
 
                 AFTER x  : add after line identified by d-string x.
                            If x is not specified or not present in Target
@@ -296,19 +310,22 @@ ADDLINE         Conditionnally ADDs a LINE to the Target File. Position of
 
 DELLINE         DELETE a given LINE from Target File.
 
-                +----------------------------+
-                | DELLINE lineid [(options ] |
-                +----------------------------+
+                +-------------------------------------+
+                | DELLINE lineid [EXACT] [ (options ] |
+                +-------------------------------------+
 
                 Command Abbreviation : DL
 
-                lineid  : d-string identifying the line to be deleted.
-                          Correspond to the lefmost characters of the line.
+                lineid  : d-string identifying the line to be deleted
+
                 options : [ ALL | FIRST | LAST ]
                           [ *ID ]
                           [ RS(x) ]
-                          [ IF "x"  ]
-                          [ IFNOT "x"  ]
+                          [ IF "x" [EXACT] ]
+                          [ IFNOT "x" [EXACT] ]
+
+                EXACT : Match identifying strings to the whole line instead
+                        of its leftmost characters
 
                 ALL     :  deletes all occurences of 'lineid' (default)
                 FIRST   :  only deletes 1st occurence of 'lineid'
@@ -329,18 +346,22 @@ DELLINE         DELETE a given LINE from Target File.
 COMMENTLINE     Comment out a line in Target File. In fact, places a
                 user-specified character string at the beginning of a line.
 
-                +------------------------------------------+
-                | COMMENTLINE lineid WITH type [(options ] |
-                +------------------------------------------+
+                +---------------------------------------------------+
+                | COMMENTLINE lineid [EXACT] WITH type [ (options ] |
+                +---------------------------------------------------+
 
                 Command Abbreviation : CL
 
                 lineid  : d-string identifying the line to be commented out.
                 type    : d-string representing comment character(s)
+
                 options : [ALL | FIRST | LAST]
                           [ *ID ]
-                          [ IF "x"  ]
-                          [ IFNOT "x"  ]
+                          [ IF "x" [EXACT] ]
+                          [ IFNOT "x" [EXACT] ]
+
+                EXACT : Match identifying strings to the whole line instead
+                        of its leftmost characters
 
                 ALL     : comment all occurences of 'lineid' (default)
                 FIRST   : only comments 1st occurence of 'lineid'
@@ -358,35 +379,37 @@ ADDSTRING       Add a string within a given line of Target File. The position
                 of the string is specified by reference to an existing string
                 within the line.
 
-                +--------------------------------------------------------------+
-                | ADDSTRING string IN lineid ( { AFTER s | BEFORE s} [Options] |
-                +--------------------------------------------------------------+
+                +---------------------------------------------+
+                | ADDSTRING string IN lineid [EXACT] (options |
+                +---------------------------------------------+
 
                 Command Abbreviation : AS
 
                 string   : d-string representing the string to be added
                 lineid   : d-string identifying the line where string
-                           must be added. Correspond to the leftmost
-                           characters of the line.
+                           must be added
 
-                AFTER [s]: add string after d-string s in line. If s is not
-                           specified or not present in line, string will be
-                           added at end of line.
-                BEFORE [s]: add string before d-string s in line. If s is not
-                            specified or not present in line, string will be
-                            added at beginning of line, but after the
-                           identifier (lineid).
-
-                options  : [ IFNEW | ALWAYS ]
+                options  : { AFTER | BEFORE } [ "s" [EXACT] ]
+                           [ IFNEW | ALWAYS ]
                            [ ALL | FIRST | LAST ]
                            [ *ID ]
                            [ RS(x) ]
                            [ ADDTOP | ADDBOTTOM ]
 
+                EXACT : Match identifying strings to the whole line instead
+                        of its leftmost characters
+
+                AFTER s  : add string after d-string s in line. If s is not
+                           specified or not present in line, string will be
+                           added at end of line.
+                BEFORE s : add string before d-string s in line. If s is not
+                           specified or not present in line, string will be
+                           added at beginning of line, but after the
+                           identifier (lineid).
+
                 ALL      : add to all occurences of 'lineid'
                 FIRST    : add only to 1st occurence of 'lineid'
                 LAST     : add only to last occurence of 'lineid'
-
 
                 IFNEW    : add string only if not already there (default)
                 ALWAYS   : always add string (even if already there)
@@ -413,18 +436,24 @@ REPSTRING       REPLACE a given STRING by another, within a given line
                 replaced with the new string. All occurences of the
                 string in a given line are replaced.
 
-                +-------------------------------------------------------+
-                | REPSTRING ostring WITH nstring [IN lineid] [(Options] |
-                +-------------------------------------------------------+
+                +------------------------------------------------------+
+                | REPSTRING ostring WITH nstring [ IN lineid [EXACT] ] |
+                |           [ (options ]                               |
+                +------------------------------------------------------+
+
                 Command Abbreviation : RS
 
-                ostring  : d-string representing the string to be replaced.
-                nstring  : d-string representing the new string
+                ostring   : d-string representing the string to be replaced
+                nstring   : d-string representing the new string
                 lineid   : d-string identifying the line where string must be
-                           replaced. Optional.
+                           replaced, optional
+
                 options  : [ ALL | FIRST | LAST ]
                            [ *ID ]
                            [ RS(x) ]
+
+                EXACT : Match identifying strings to the whole line instead
+                        of its leftmost characters
 
                 ALL      : replaces in all occurences of 'lineid'
                 FIRST    : replaces only in 1st occurence of 'lineid'
@@ -447,17 +476,21 @@ DELSTRING       DELETE a given STRING in a given line of Target File. If
                 Target File will be deleted. All occurences of the string in
                 a given line are deleted.
 
-                +-----------------------------------------+
-                | DELSTRING string [IN lineid] [(Options] |
-                +-----------------------------------------+
+                +-----------------------------------------------------+
+                | DELSTRING string [ IN lineid [EXACT] ] [ (options ] |
+                +-----------------------------------------------------+
                 Command Abbreviation : DS
 
                 string   : d-string representing the string to be deleted.
                 lineid   : d-string identifying the line where string must be
-                           deleted. Optional.
+                           deleted, optional
+
                 options  : [ ALL | FIRST | LAST ]
                            [ *ID ]
                            [ RS(x) ]
+
+                EXACT : Match identifying strings to the whole line instead
+                        of its leftmost characters
 
                 ALL      : deletes in all occurences of 'lineid'
                 FIRST    : deletes only in 1st occurence of 'lineid'
