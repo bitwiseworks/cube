@@ -8,7 +8,7 @@
     +----------------------------------------------------------------------+
     |   LINEID { NOSTRIP | STRIP "x" }                                     |
     +----------------------------------------------------------------------+
-    |   AddLine  line [EXACT] [ (options ]                                 |
+    |   AddLine  line [EXACT] [ (options[)] ]                              |
     |                                                                      |
     |   options : [ AFTER "x" [EXACT] [ONLY] | BEFORE "x" [EXACT] [ONLY] ] |
     |             [ IFNEW | ALWAYS ]                                       |
@@ -17,14 +17,14 @@
     |             [ IF "x" [EXACT] ]                                       |
     |             [ IFNOT "x" [EXACT] ]                                    |
     +----------------------------------------------------------------------+
-    |   CommentLine lineid [EXACT] WITH type [ (options ]                  |
+    |   CommentLine lineid [EXACT] WITH type [ (options[)] ]               |
     |                                                                      |
     |   options : [ ALL | FIRST | LAST ]                                   |
     |             [ *ID ]                                                  |
     |             [ IF "x" [EXACT] ]                                       |
     |             [ IFNOT "x" [EXACT] ]                                    |
     +----------------------------------------------------------------------+
-    |   DelLine lineid [EXACT] [ (options ]                                |
+    |   DelLine lineid [EXACT] [ (options[)] ]                             |
     |                                                                      |
     |   options : [ ALL | FIRST | LAST ]                                   |
     |             [ *ID ]                                                  |
@@ -32,7 +32,7 @@
     |             [ IF "x" [EXACT] ]                                       |
     |             [ IFNOT "x" [EXACT] ]                                    |
     +----------------------------------------------------------------------+
-    |   RepLine lineid [EXACT] WITH replacement [ (options ]               |
+    |   RepLine lineid [EXACT] WITH replacement [ (options[)] ]            |
     |                                                                      |
     |   options:  [ ALL | FIRST | LAST ]                                   |
     |             [ ADDTOP | ADDBOTTOM | DONTADD ]                         |
@@ -41,7 +41,7 @@
     |             [ IF "x" [EXACT] ]                                       |
     |             [ IFNOT "x" [EXACT] ]                                    |
     +----------------------------------------------------------------------+
-    |   AddString string IN lineid [EXACT] (options                        |
+    |   AddString string IN lineid [EXACT] (options[)]                     |
     |                                                                      |
     |   options : { AFTER | BEFORE } [ "s" [EXACT] ]                       |
     |             [ IFNEW | ALWAYS ]                                       |
@@ -50,13 +50,13 @@
     |             [ RS(x) ]                                                |
     |             [ ADDTOP | ADDBOTTOM ]                                   |
     +----------------------------------------------------------------------+
-    |   DelString string [ IN lineid [EXACT] ] [ (options ]                |
+    |   DelString string [ IN lineid [EXACT] ] [ (options[)] ]             |
     |                                                                      |
     |   options  : [ ALL | FIRST | LAST ]                                  |
     |              [ *ID ]                                                 |
     |              [ RS(x) ]                                               |
     +----------------------------------------------------------------------+
-    |   RepString ostring WITH nstring [IN lineid [EXACT]] [(options]      |
+    |   RepString oldstr WITH newstr [IN lineid [EXACT]] [(options[)]]     |
     |                                                                      |
     |   options : [ ALL | FIRST | LAST ]                                   |
     |             [ *ID ]                                                  |

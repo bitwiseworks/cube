@@ -6,6 +6,7 @@
     |  file, given a set of commands in a Procedure file.                   |
     |                                                                       |
     |  2026-11-26 V3.1 DK  Add per-identifier EXACT matching mode flag      |
+    |  2026-11-26 V3.1 DK  Accept optional trailing ) in options            |
     |  2026-11-25 V3.1 DK  Preserve original case in ADDSTRING and DELSTRING|
     |  2026-11-24 V3.1 DK  Replace non-ASCI chars with similar ASCII        |
     |  2026-11-24 V3.1 DK  Exit with -1 (255) on fatal errors unless in     |
@@ -67,6 +68,7 @@ else do
   parse arg PFile TFile Bkup . '(' Opt
   pf = 1
 end
+Opt = FixOpts(Opt)
 
 DeleteMarker = '062003200420052006200320042005'x
 
@@ -177,6 +179,19 @@ do while p <= Proc.0                               /* for all PFile's lines   */
   if pause then Pull .
 end
 call Exit 1 source 'ended.'                        /* It's OVER !! and OK !!  */
+
+/* +-----------------------------------------------------------------------+
+   |  Trim trailing space and ) w/o consuming a space-separated DLM value  |
+   +-----------------------------------------------------------------------+  */
+FixOpts: procedure
+  parse arg options
+  options = strip(options,'T')
+  n = length(options)
+  if n > 1 then
+    if right(options,1) = ')' then
+      if pos(substr(options,n-1,1),'090A0B0C0D20'x) = 0 then
+        options = left(options,n-1)
+  return options
 
 /* +-----------------------------------------------------------------------+
    |  Error report and action (based on Onerr setting, from ONERROR cmd)   |
@@ -382,6 +397,7 @@ SLINEID:
         +---------------------------------------------------------+           */
 REPLINE:
   parse var Parms (_d_) Lineid (_d_) Flags 'WITH' (_d_) With (_d_)  '(' Opt
+  Opt = FixOpts(Opt)
   if Lineid = '' then do                           /* No line identifier      */
     rc=OnErrorDo(p,'Replace what line ?')
     return
@@ -419,6 +435,7 @@ REPLINE:
         +-----------------------------------------------------------+         */
 ADDLINE:
   parse var Parms (_d_) Line (_d_) Flags '(' Opt
+  Opt = FixOpts(Opt)
   if Line = '' then do                             /* No line identifier      */
     rc=OnErrorDo(p,'Add what line ?')              /*    process error        */
     return                                         /*    ignore command       */
@@ -467,6 +484,7 @@ ADDLINE:
         +-----------------------------------------------------------+         */
 ADDSTRING:
   parse var Parms (_d_) With (_d_)  'IN' (_d_) Lineid (_d_) Flags '(' Opt
+  Opt = FixOpts(Opt)
   if Lineid = '' then do                           /* No line identifier      */
     rc=OnErrorDo(p,'Add string where ?')           /*    process error        */
     return                                         /*    ignore command       */
@@ -546,6 +564,7 @@ DELSTRING:
     parse var Parms (_d_) What (_d_)  '(' Opt
     Flags = ''
   end
+  Opt = FixOpts(Opt)
   if What = '' then do                             /* No string to del        */
     rc=OnErrorDo(p,'Delete what string ?')         /*    process error        */
     return                                         /*    ignore command       */
@@ -590,6 +609,7 @@ REPSTRING:
     parse var Parms (_d_) Ostr (_d_)  '(' Opt
     Flags = ''
   end
+  Opt = FixOpts(Opt)
   if With = '' then With = Ostr                    /* No rep string specif.   */
   With = Cmdrs(With)                               /* cmd substitution        */
   With = envrs(With,Opt)                           /* env substitution if req.*/
@@ -624,6 +644,7 @@ REPSTRING:
         +---------------------------------------------------------+           */
 COMMENTL:
   parse var Parms (_d_) Lineid (_d_) Flags 'WITH' (_d_) cmnt (_d_)  '(' Opt
+  Opt = FixOpts(Opt)
   if Lineid = '' then do                           /* No identifier           */
     rc=OnErrorDo(p,'Comment what ?')               /*    process error        */
     return                                         /*    ignore command       */
@@ -652,6 +673,7 @@ COMMENTL:
         +---------------------------------------------------------+           */
 DELLINE:
   parse var Parms (_d_) Lineid (_d_) Flags '(' Opt
+  Opt = FixOpts(Opt)
   if Lineid = '' then do                           /* No identifier           */
     rc=OnErrorDo(p,'Delete what line ?')           /*    process error        */
     return                                         /*    ignore command       */

@@ -2,11 +2,11 @@
                                ======
                                 V3.1
 
- +-----------------------------------------------------------------------+
- |NOTE TO USERS of CUBE versions 1.x : some modifications in strings     |
- |  substitution with environment variables values, and REPSTRING syntax |
- |  may require that you update Procedure files before using version 2.x |
- +-----------------------------------------------------------------------+
+ +----------------------------------------------------------------------------+
+ |NOTE TO USERS of CUBE versions 1.x : some modifications in strings          |
+ |  substitution with environment variables values, and REPSTRING syntax      |
+ |  may require that you update Procedure files before using version 2.x      |
+ +----------------------------------------------------------------------------+
 
   CUBE is a REXX procedure used to modify a CONFIG.SYS-like ASCII file (the
 Target File), based on a set of CUBE's commands (the Procedure File).
@@ -58,7 +58,7 @@ CHECK and STATUS options use separate conventions for return values (see below).
                          CUBE calling syntax
                         =====================
  +----------------------------------------------------------------------------+
- | CUBE procfname targetfname [backupfname] [ (options ] [ >log-fname ]       |
+ | CUBE procfname targetfname [backupfname] [ (options[)] ] [ >log-fname ]    |
  +----------------------------------------------------------------------------+
  |      procfname = name of Procedure file containing CUBE's commands         |
  |                                     --or--                                 |
@@ -217,9 +217,9 @@ REPLINE         REPLACE an entire LINE of Target File with a new text.
                 If the line is not found within Target File, the new line
                 may be added to the Target File.
 
-                +-------------------------------------------------------+
-                |  REPLINE lineid [EXACT] WITH replacement [ (options ] |
-                +-------------------------------------------------------+
+                +----------------------------------------------------------+
+                |  REPLINE lineid [EXACT] WITH replacement [ (options[)] ] |
+                +----------------------------------------------------------+
 
                 Command Abbreviation : RL
 
@@ -263,9 +263,9 @@ REPLINE         REPLACE an entire LINE of Target File with a new text.
 ADDLINE         Conditionally ADDs a LINE to the Target File. Position of
                 the line may be specified by reference to an existing line.
 
-                +-----------------------------------+
-                | ADDLINE line [EXACT] [ (options ] |
-                +-----------------------------------+
+                +--------------------------------------+
+                | ADDLINE line [EXACT] [ (options[)] ] |
+                +--------------------------------------+
 
                 Command Abbreviation : AL
 
@@ -310,9 +310,9 @@ ADDLINE         Conditionally ADDs a LINE to the Target File. Position of
 
 DELLINE         DELETE a given LINE from Target File.
 
-                +-------------------------------------+
-                | DELLINE lineid [EXACT] [ (options ] |
-                +-------------------------------------+
+                +----------------------------------------+
+                | DELLINE lineid [EXACT] [ (options[)] ] |
+                +----------------------------------------+
 
                 Command Abbreviation : DL
 
@@ -346,9 +346,9 @@ DELLINE         DELETE a given LINE from Target File.
 COMMENTLINE     Comment out a line in Target File. In fact, places a
                 user-specified character string at the beginning of a line.
 
-                +---------------------------------------------------+
-                | COMMENTLINE lineid [EXACT] WITH type [ (options ] |
-                +---------------------------------------------------+
+                +------------------------------------------------------+
+                | COMMENTLINE lineid [EXACT] WITH type [ (options[)] ] |
+                +------------------------------------------------------+
 
                 Command Abbreviation : CL
 
@@ -379,9 +379,9 @@ ADDSTRING       Add a string within a given line of Target File. The position
                 of the string is specified by reference to an existing string
                 within the line.
 
-                +---------------------------------------------+
-                | ADDSTRING string IN lineid [EXACT] (options |
-                +---------------------------------------------+
+                +------------------------------------------------+
+                | ADDSTRING string IN lineid [EXACT] (options[)] |
+                +------------------------------------------------+
 
                 Command Abbreviation : AS
 
@@ -436,15 +436,15 @@ REPSTRING       REPLACE a given STRING by another, within a given line
                 replaced with the new string. All occurences of the
                 string in a given line are replaced.
 
-                +------------------------------------------------------+
-                | REPSTRING ostring WITH nstring [ IN lineid [EXACT] ] |
-                |           [ (options ]                               |
-                +------------------------------------------------------+
+                +----------------------------------------------------+
+                | REPSTRING oldstr WITH newstr [ IN lineid [EXACT] ] |
+                |           [ (options[)] ]                          |
+                +----------------------------------------------------+
 
                 Command Abbreviation : RS
 
-                ostring   : d-string representing the string to be replaced
-                nstring   : d-string representing the new string
+                oldstr   : d-string representing the string to be replaced
+                newstr   : d-string representing the new string
                 lineid   : d-string identifying the line where string must be
                            replaced, optional
 
@@ -476,9 +476,9 @@ DELSTRING       DELETE a given STRING in a given line of Target File. If
                 Target File will be deleted. All occurences of the string in
                 a given line are deleted.
 
-                +-----------------------------------------------------+
-                | DELSTRING string [ IN lineid [EXACT] ] [ (options ] |
-                +-----------------------------------------------------+
+                +--------------------------------------------------------+
+                | DELSTRING string [ IN lineid [EXACT] ] [ (options[)] ] |
+                +--------------------------------------------------------+
                 Command Abbreviation : DS
 
                 string   : d-string representing the string to be deleted.
